@@ -1,0 +1,985 @@
+# Subscription Tracker — Phase 2 Product & Design Planning Document
+
+**Status:** Planning only (no code, no file changes)  
+**Phase 1:** Complete (Expo + Express + MongoDB foundation)  
+**Phase 2 objective:** Lock product vision, UX, IA, and engineering standards before feature development
+
+---
+
+## 1. Product Vision
+
+### Core product philosophy
+
+Subscription Tracker exists to restore **financial calm**. Recurring charges should feel predictable, visible, and controllable—not like surprises on a bank statement.
+
+Design and product decisions optimize for three outcomes:
+
+1. **Clarity** — know what you pay, when, and why  
+2. **Control** — act before money leaves (remind, pause intent, cancel path)  
+3. **Confidence** — trust totals, dates, and reminders without spreadsheet anxiety  
+
+Inspiration blend: Apple’s restraint, Airbnb’s warmth in empty/onboarding moments, Stripe’s precision with money and status.
+
+**North-star statement:**  
+*Help people see every subscription clearly, anticipate every charge, and decide with confidence—in under 30 seconds a day.*
+
+### Target audience
+
+| Segment | Who | Primary need |
+|---|---|---|
+| **Primary** | Busy professionals 22–45 managing 5–20 digital subscriptions | Stop surprise charges; know monthly spend |
+| **Secondary** | Couples / shared households | Shared visibility without shared bank login |
+| **Tertiary** | Freelancers / creators | Separate personal vs work subscriptions |
+| **Later** | Families with teens | Approvals, allowances, shared plans |
+
+**Anti-audience (MVP):** enterprise procurement, complex B2B SaaS admin, tax accounting suites.
+
+### Primary user problems
+
+1. **Invisible spend** — subscriptions accumulate quietly across cards and stores  
+2. **Surprise renewals** — free trials convert; annual plans hit once a year  
+3. **Decision friction** — “Do I still use this?” has no easy answer  
+4. **Fragmented reminders** — calendar, email, banking apps don’t unify intent  
+5. **Shame / overwhelm** — money apps feel judgmental or dense  
+
+### Product goals
+
+| Goal | Description |
+|---|---|
+| G1 | Make total recurring spend obvious within first session |
+| G2 | Make next charge date undeniable for every active subscription |
+| G3 | Turn reminders into timely, actionable nudges (not noise) |
+| G4 | Make add/edit flows effortless enough for weekly use |
+| G5 | Earn trust with accurate money presentation and honest empty/error states |
+| G6 | Create a natural upgrade path to Premium without dark patterns |
+
+### Success metrics
+
+**Activation**
+- [ ] % of new users who add ?1 subscription within 5 minutes  
+- [ ] % who complete onboarding without skip-and-abandon within 24h  
+- [ ] Time-to-first-value (TTFV) median < 3 minutes  
+
+**Engagement**
+- [ ] D1 / D7 / D30 retention  
+- [ ] Weekly active users who open app ?2×/week  
+- [ ] % of active subscriptions with reminder enabled  
+
+**Outcomes**
+- [ ] % of users who dismiss or act on a reminder before charge date  
+- [ ] Self-reported “no surprise charges this month” (in-app pulse)  
+- [ ] Average subscriptions tracked per active user  
+
+**Quality / trust**
+- [ ] Crash-free sessions ? 99.5%  
+- [ ] Support tickets per 1k MAU  
+- [ ] Reminder delivery success rate  
+
+**Business (post-MVP)**
+- [ ] Free ? Premium conversion  
+- [ ] Trial ? paid conversion  
+- [ ] Churn / refund rate  
+
+---
+
+## 2. Brand Identity
+
+### Design principles
+
+1. **Quiet confidence** — calm UI; no alarmism about money  
+2. **Money-first honesty** — amounts, dates, and status always readable first  
+3. **One job per screen** — avoid dashboard clutter on first viewport  
+4. **Warm empty states** — helpful, never scolding  
+5. **Motion with purpose** — reinforce hierarchy and feedback, not decoration  
+6. **Accessible by default** — contrast, targets, and scaling are non-negotiable  
+7. **Premium without flash** — upgrade feels like capability, not chrome  
+
+### Personality
+
+| Trait | In product | Avoid |
+|---|---|---|
+| Calm | Soft surfaces, measured copy | Panic red everywhere |
+| Precise | Exact currency, clear dates | Vague “soon” language |
+| Human | Friendly empty/error copy | Corporate legalese in UI |
+| Trustworthy | Stable layouts, predictable patterns | Gimmicky gamification |
+| Modern | Clean type, intentional color | Generic purple gradients / neon glass |
+
+**Voice:** clear, concise, respectful. Like a smart friend who respects your time and money.
+
+### Color palette recommendations
+
+**Direction:** Deep teal / ocean primary (trust + calm), warm sand neutrals, mint success, amber caution, coral danger. Avoid default AI purple and cream-serif clichés.
+
+| Token | Role | Recommended hex (starting point) |
+|---|---|---|
+| `color.bg.app` | App background | `#F3F6F8` |
+| `color.bg.surface` | Cards / sheets | `#FFFFFF` |
+| `color.bg.subtle` | Grouped rows | `#E8EEF2` |
+| `color.text.primary` | Primary text | `#0F1C24` |
+| `color.text.secondary` | Secondary | `#5B6B76` |
+| `color.text.tertiary` | Hints / meta | `#8A9AA6` |
+| `color.brand.primary` | CTAs, key accents | `#0B6E6A` |
+| `color.brand.primaryPressed` | Pressed | `#085652` |
+| `color.brand.soft` | Soft fills / chips | `#D7F0EE` |
+| `color.accent` | Highlights / Premium | `#C9832A` |
+| `color.success` | Paid / on track | `#1F8A5B` |
+| `color.warning` | Due soon | `#C47A12` |
+| `color.danger` | Overdue / delete | `#C23B3B` |
+| `color.border` | Dividers | `#D5DEE5` |
+| `color.overlay` | Modals | `#0F1C24` @ 40% |
+
+**Category accents (optional, muted):** Streaming, Productivity, Health, Finance, Shopping, Other — soft pastel tints on a shared neutral base so color codes without rainbow chaos.
+
+### Typography system
+
+**Recommendation:** Expressive but product-grade pairing  
+- **Display / brand moments:** `Fraunces` or `Newsreader` (limited use: onboarding hero, empty-state titles)  
+- **UI / body:** `DM Sans` or `Plus Jakarta Sans`  
+- **Numbers / money:** Tabular figures; prefer UI font with `fontVariant: ['tabular-nums']` for amounts  
+
+| Style | Size / weight | Use |
+|---|---|---|
+| Display | 34 / Semibold | Onboarding brand, rare heroes |
+| Title 1 | 28 / Semibold | Screen titles |
+| Title 2 | 22 / Semibold | Section headers |
+| Title 3 | 18 / Medium | Card titles |
+| Body | 16 / Regular | Primary content |
+| Body Strong | 16 / Medium | Emphasized body |
+| Callout | 15 / Regular | Secondary paragraphs |
+| Subhead | 14 / Medium | List meta |
+| Footnote | 13 / Regular | Helper text |
+| Caption | 12 / Medium | Badges, timestamps |
+| Amount LG | 28–32 / Semibold | Monthly total |
+| Amount MD | 18–20 / Semibold | Row amounts |
+| Amount SM | 14 / Medium | Compact money |
+
+**Line height:** ~1.25 for titles, ~1.45 for body. Never rely on system Inter/Roboto/Arial as brand voice.
+
+### Icon style
+
+- **Style:** Rounded stroke icons, 1.75–2px optical weight  
+- **Grid:** 24×24 base; 20 for dense lists; 16 for inline meta  
+- **Corner:** Softly rounded (not sharp geometric, not bubbly)  
+- **Library approach:** One consistent set (e.g. custom + curated Lucide/SF-like strokes)  
+- **Filled vs outline:** Outline default; filled for selected tab / active status only  
+- **Avoid:** Emoji as UI icons; multi-color skeuomorphic icons in chrome  
+
+### Illustration style
+
+- Soft, flat vector scenes with limited palette (teal + sand + one accent)  
+- Human-scale metaphors: calendar, quiet desk, soft receipt—not coins raining  
+- Used for: onboarding, empty states, Premium education, offline empathy  
+- One illustration family; no mixed stock styles  
+- Prefer subtle motion on illustrations (fade/slide) over looping cartoons  
+
+### Spacing system
+
+Base unit **4**. Preferred scale:
+
+| Token | Value |
+|---|---|
+| `space.0` | 0 |
+| `space.1` | 4 |
+| `space.2` | 8 |
+| `space.3` | 12 |
+| `space.4` | 16 |
+| `space.5` | 20 |
+| `space.6` | 24 |
+| `space.8` | 32 |
+| `space.10` | 40 |
+| `space.12` | 48 |
+| `space.16` | 64 |
+
+**Layout rules**
+- Screen horizontal padding: 20 (mobile)  
+- Section gap: 24–32  
+- List row min height: 56–64  
+- Form field gap: 16  
+- Between stacked CTAs: 12  
+
+### Elevation and shadows
+
+Prefer **surface + border** over heavy shadows. Shadows only for floating actions and sheets.
+
+| Level | Use | Spec direction |
+|---|---|---|
+| 0 | Flat lists | Border only |
+| 1 | Cards (rare) | Soft Y:4 blur:12 opacity ~6% |
+| 2 | FAB / sticky bars | Y:6 blur:16 opacity ~10% |
+| 3 | Modals / sheets | Y:12 blur:32 opacity ~16% |
+
+Dark text on light surfaces; no glow aesthetics.
+
+### Border radius system
+
+| Token | Value | Use |
+|---|---|---|
+| `radius.sm` | 8 | Chips, inputs |
+| `radius.md` | 12 | Buttons, rows |
+| `radius.lg` | 16 | Cards, tiles |
+| `radius.xl` | 24 | Sheets, large containers |
+| `radius.full` | 999 | Avatars only (sparingly) |
+
+Avoid pill-everything. Primary buttons: `radius.md`, not stadium pills by default.
+
+### Motion and animation philosophy
+
+**Ship intentional motion (2–3 signature patterns):**
+1. **Screen enter** — short fade + 8–12px upward settle (200–280ms)  
+2. **Value change** — amount crossfade / count with restraint  
+3. **Success check** — compact confirmation after save  
+
+**Rules**
+- Ease: standard decelerate for enters; accelerate for exits  
+- Duration: 150–300ms interactive; ?400ms page transitions  
+- Respect Reduce Motion: replace with opacity-only or instant  
+- Never delay task completion for animation  
+- Reminders / money updates: clarity first, delight second  
+
+---
+
+## 3. Complete User Journey
+
+### First-time user flow
+
+1. Launch ? splash (brand only, short)  
+2. Welcome ? value prop (brand-forward, one CTA)  
+3. Optional account create / sign-in (email or social—decide in Phase 3 auth design)  
+4. Quick preference: currency + reminder default time  
+5. “Add your first subscription” guided prompt  
+6. Create subscription (minimal fields)  
+7. Land on Home with monthly total + next upcoming  
+8. Soft prompt: enable notifications  
+
+**Success moment:** Home shows a real total and a next charge—not an empty dashboard of widgets.
+
+### Returning user flow
+
+1. Launch ? Home (last known data, then refresh)  
+2. Scan: monthly total, due soon, recent activity  
+3. Act: open subscription, mark paid (if manual), snooze reminder, add new  
+4. Exit without friction  
+
+### Subscription creation flow
+
+1. Entry: Home FAB / empty CTA / “+”  
+2. Choose: quick template (Netflix, Spotify…) **or** custom  
+3. Essentials: name, amount, billing cycle, next billing date  
+4. Optional expand: category, payment method note, trial end, URL, notes  
+5. Reminder toggle + timing  
+6. Review summary ? Save  
+7. Success toast + navigate to detail or Home  
+
+**Principle:** 4 required fields max for happy path.
+
+### Reminder flow
+
+1. System schedules local/push based on subscription rules  
+2. Notification: “Netflix renews tomorrow · $15.99”  
+3. Tap ? Subscription Detail (deep link)  
+4. Actions: Snooze, Mark reviewed, Open manage URL, Edit  
+5. If acted: suppress duplicate until next cycle  
+
+### Premium flow
+
+1. Natural trigger: hit free limit / want insights / multi-device / advanced reminders  
+2. Paywall: capability-focused (not feature dump)  
+3. Plan select ? purchase (StoreKit/Play Billing)  
+4. Restore purchases available  
+5. Success ? unlocked state + receipt of entitlements  
+6. Manage subscription via platform settings link  
+
+**Ethics:** No fake urgency timers; no blocking core tracking behind paywall for basic add/view.
+
+### Error and recovery flows
+
+| Scenario | User experience |
+|---|---|
+| Network fail on load | Cached content + offline banner + retry |
+| Save fails | Keep form draft; inline error; retry |
+| Auth expired | Re-auth sheet; return to prior intent |
+| Notification permission denied | Explain value; link to settings; app still useful |
+| Purchase fail | Clear reason; retry; restore option |
+| Conflict / stale data | Refresh prompt; don’t silently overwrite user edits |
+| Empty search | Helpful zero + clear filters CTA |
+
+---
+
+## 4. Information Architecture
+
+### Navigation structure
+
+**Primary:** Bottom tabs (3–4 max for MVP)  
+**Secondary:** Stacks within tabs  
+**Tertiary:** Modals / sheets for create, filters, paywall, confirmations  
+
+### Bottom tabs (MVP)
+
+| Tab | Purpose |
+|---|---|
+| **Home** | Totals, upcoming, quick actions |
+| **Subscriptions** | Full list, search, filters, sort |
+| **Insights** | Spend overview (light in MVP; richer in Premium) |
+| **Settings** | Profile, preferences, notifications, Premium, about |
+
+*(If MVP needs fewer surfaces: merge Insights into Home and keep 3 tabs.)*
+
+### Screen hierarchy (conceptual)
+
+```
+Root Tabs
+??? Home Stack
+?   ??? Home
+?   ??? Upcoming list
+?   ??? Notification center (optional)
+??? Subscriptions Stack
+?   ??? Subscription list
+?   ??? Subscription detail
+?   ??? Edit subscription
+?   ??? Category / filter results
+??? Insights Stack
+?   ??? Overview
+?   ??? By category
+?   ??? By payment period
+??? Settings Stack
+    ??? Settings hub
+    ??? Account
+    ??? Preferences
+    ??? Notifications
+    ??? Currency / locale
+    ??? Premium
+    ??? Legal / support
+
+Global Modals
+??? Add / Edit subscription (sheet or full screen)
+??? Paywall
+??? Reminder permission education
+??? Confirm delete
+??? Templates picker
+```
+
+### Stack navigation
+
+- Each tab owns an independent stack (state preserved on tab switch)  
+- Detail screens push; edits may push or present as modal depending on depth  
+- Avoid nested tabs  
+
+### Modal strategy
+
+| Pattern | Use |
+|---|---|
+| **Form sheet (medium)** | Quick add, filters, snooze |
+| **Full-screen modal** | Complex create/edit, onboarding steps |
+| **Confirm dialog** | Delete, discard changes |
+| **Transparent paywall modal** | Upgrade moments |
+
+Dismiss rules: swipe-down where safe; warn on dirty forms.
+
+### Deep linking considerations
+
+| Link | Destination |
+|---|---|
+| `subscriptiontracker://home` | Home |
+| `.../subscriptions` | List |
+| `.../subscriptions/:id` | Detail |
+| `.../subscriptions/new` | Create modal |
+| `.../premium` | Paywall |
+| `.../settings/notifications` | Notification settings |
+
+Reminders must deep-link to exact subscription. Universal Links / App Links planned for production.
+
+---
+
+## 5. Complete Screen Inventory
+
+### Auth & onboarding
+
+| Screen | MVP | Later |
+|---|---|---|
+| Splash | ? |  |
+| Welcome / value | ? |  |
+| Sign up | ? |  |
+| Sign in | ? |  |
+| Forgot password | ? |  |
+| Verify email | ? |  |
+| Onboarding preferences | ? |  |
+| Notification permission education | ? |  |
+| Biometric unlock gate |  | ? |
+
+### Home
+
+| Screen | MVP | Later |
+|---|---|---|
+| Home dashboard | ? |  |
+| Upcoming charges | ? |  |
+| Due soon focus | ? |  |
+| Activity / recent changes |  | ? |
+
+### Subscriptions
+
+| Screen | MVP | Later |
+|---|---|---|
+| Subscription list | ? |  |
+| Search / filter | ? |  |
+| Subscription detail | ? |  |
+| Create subscription | ? |  |
+| Edit subscription | ? |  |
+| Templates / catalog picker | ? |  |
+| Archive / canceled list | ? |  |
+| Duplicate subscription |  | ? |
+| Share subscription card |  | ? |
+| Family / shared ownership |  | ? |
+
+### Reminders & notifications
+
+| Screen | MVP | Later |
+|---|---|---|
+| In-app reminder inbox | Optional | ? |
+| Reminder rules editor | ? (per sub) | Advanced global rules |
+| Snooze picker | ? |  |
+
+### Insights
+
+| Screen | MVP | Later |
+|---|---|---|
+| Monthly / yearly spend summary | ? light | ? rich |
+| Category breakdown | ? |  |
+| Trend over time |  | ? |
+| Unused subscription suggestions |  | ? |
+| Export report |  | ? |
+
+### Premium / billing
+
+| Screen | MVP | Later |
+|---|---|---|
+| Paywall | ? |  |
+| Plan comparison | ? |  |
+| Purchase success | ? |  |
+| Manage Premium | ? |  |
+| Promo / referral redeem |  | ? |
+
+### Settings & account
+
+| Screen | MVP | Later |
+|---|---|---|
+| Settings hub | ? |  |
+| Profile | ? |  |
+| Currency & formats | ? |  |
+| Default reminder prefs | ? |  |
+| Notification settings | ? |  |
+| Appearance (system / light) | ? system | Dark mode later if brand-approved |
+| Connected accounts / import |  | ? |
+| Data export / delete account | ? |  |
+| Help / FAQ | ? |  |
+| Legal (Privacy, Terms) | ? |  |
+
+### System / utility
+
+| Screen | MVP | Later |
+|---|---|---|
+| Offline banner / full offline | ? |  |
+| Force update | ? |  |
+| Maintenance | ? |  |
+| 404 deep link fallback | ? |  |
+| App lock / PIN |  | ? |
+
+---
+
+## 6. Component Design System
+
+| Component | Purpose | Variants | Guidelines |
+|---|---|---|---|
+| **AppButton** | Primary actions | primary, secondary, tertiary, destructive, ghost; sizes sm/md/lg; loading | One primary CTA per view |
+| **IconButton** | Compact actions | default, tonal, danger | Min 44×44 hit area |
+| **TextField** | Text input | default, error, disabled; secure | Clear labels; helper below |
+| **AmountField** | Money entry | with currency affix | Tabular nums; locale aware |
+| **DateField** | Pick billing dates | inline / sheet picker | Never free-text dates only |
+| **SelectField** | Single select | sheet list | Use for cycle, category |
+| **ToggleRow** | Boolean settings | on/off + description | Whole row tappable |
+| **ListRow** | Navigation / data row | chevron, value, switch | Consistent 16–20 padding |
+| **SubscriptionRow** | Core list item | active, canceled, dueSoon | Name + amount + next date hierarchy |
+| **SummaryHeader** | Monthly total block | compact / expanded | Brand-adjacent, not widget soup |
+| **StatusChip** | Status label | active, trial, canceled, dueSoon, overdue | Muted fills; readable text |
+| **CategoryChip** | Category filter | selected / unselected | Don’t use pill clusters in hero |
+| **Card** | Interactive grouping only | elevated / flat | Default: no cards; use when interaction needs containment |
+| **Sheet** | Modal surface | snap points | Primary pattern for create/filters |
+| **AppModal** | Dialogs | confirm, alert | Destructive = explicit |
+| **EmptyState** | Zero data | illustration + title + CTA | Always offer next action |
+| **ErrorState** | Recoverable failure | inline / full page | Retry + support path |
+| **LoadingSkeleton** | Loading placeholder | row, header, detail | Prefer skeleton over spinner walls |
+| **Toast** | Transient feedback | success, error, info | Don’t steal focus for trivial saves |
+| **Banner** | Persistent notice | offline, warning | Dismissible when safe |
+| **SegmentedControl** | Mode switch | 2–3 options | Monthly/Yearly, Active/Canceled |
+| **SearchBar** | Filter lists | with clear | Debounce; sticky under header |
+| **FAB** | Primary create | single action | Home / list only; hide on scroll optional |
+| **TabBar** | Root nav | 3–4 items | Selected = filled icon + label |
+| **NavHeader** | Stack header | large / inline | Titles clear; avoid crowded trailing actions |
+| **Avatar** | User/profile | initials / image | Settings only in MVP |
+| **ProgressIndicator** | Onboarding steps | dots / bar | Minimal |
+| **PaywallFeatureRow** | Premium education | included / locked | Capability language |
+| **ChartBar / Donut** | Insights | category spend | Keep simple; Premium can deepen |
+
+**Composition rule:** Prefer lists + typography hierarchy over nested card grids.
+
+---
+
+## 7. UX States
+
+### Home
+
+| State | Treatment |
+|---|---|
+| Empty | Illustration + “Add your first subscription” + template shortcuts |
+| Loading | Skeleton for total + 3 upcoming rows |
+| Success | Total + upcoming + quick add |
+| Error | Banner + last cached data if any + retry |
+| Offline | Offline banner; cached Home; disable sync-only actions |
+
+### Subscriptions list
+
+| State | Treatment |
+|---|---|
+| Empty | Same as Home empty if global zero; else “No matches” for filters |
+| Loading | Row skeletons |
+| Success | Grouped or flat list with sticky search |
+| Error | Full-page error with retry |
+| Offline | Cached list; show sync pending indicator on dirty items |
+
+### Subscription detail
+
+| State | Treatment |
+|---|---|
+| Empty | N/A (invalid id ? not found) |
+| Loading | Detail skeleton |
+| Success | Identity, money, schedule, reminder, notes, actions |
+| Error | Can’t load detail; back + retry |
+| Offline | Read-only cached detail; edit queued or blocked with explanation |
+
+### Create / Edit
+
+| State | Treatment |
+|---|---|
+| Empty | Blank form with smart defaults (next month, monthly) |
+| Loading | Saving button state; disable double submit |
+| Success | Toast + dismiss to detail/list |
+| Error | Inline field errors + non-blocking banner |
+| Offline | Save locally queued **or** block with clear offline message (pick one strategy and stay consistent) |
+
+### Insights
+
+| State | Treatment |
+|---|---|
+| Empty | “Insights appear after you add subscriptions” |
+| Loading | Chart/list skeletons |
+| Success | Summary + breakdown |
+| Error | Retry |
+| Offline | Last computed snapshot + timestamp |
+
+### Paywall
+
+| State | Treatment |
+|---|---|
+| Empty | N/A |
+| Loading | Fetching products |
+| Success | Plans + CTA |
+| Error | Store unavailable + retry + restore |
+| Offline | Explain purchases need connection |
+
+### Settings
+
+| State | Treatment |
+|---|---|
+| Empty | N/A |
+| Loading | Subtle placeholders for profile |
+| Success | Grouped rows |
+| Error | Partial render + retry on failing sections |
+| Offline | Local prefs editable; account sync later |
+
+---
+
+## 8. Accessibility Guidelines
+
+### Font scaling
+
+- Support Dynamic Type / Android font scale up to large accessibility sizes  
+- Layouts must reflow; no truncated critical amounts at large sizes  
+- Cap decorative display type; never clip currency at any scale  
+- Test at 100%, 150%, 200%  
+
+### Touch targets
+
+- Minimum **44×44 pt** (Apple HIG) / **48×48 dp** (Material)  
+- List rows ? 56 height  
+- Maintain spacing between adjacent targets ? 8  
+
+### Color contrast
+
+- Text vs background ? **4.5:1** (body), ? **3:1** (large text)  
+- Status never by color alone—pair with label/icon  
+- Danger actions: text + position + explicit wording  
+
+### Screen reader considerations
+
+- Meaningful labels for icon-only buttons (“Add subscription”)  
+- Announce amount + currency + cycle together  
+- Logical focus order: header ? summary ? list ? FAB  
+- Live regions for toasts/offline banners  
+- Hide decorative illustrations from a11y tree  
+
+### Keyboard accessibility (where applicable)
+
+- Android/web: tab order for forms  
+- Submit from keyboard on primary field where OS allows  
+- No focus traps in sheets except intentional modal focus lock with escape/back  
+
+### Additional
+
+- Respect Reduce Motion  
+- Respect OS dark mode only when brand ships a true dark theme (don’t ship a half dark MVP)  
+- Localization-ready strings (no concatenated sentences)  
+
+---
+
+## 9. Feature Breakdown
+
+Priorities: **P0** MVP must-have · **P1** MVP strong · **P2** post-MVP · **P3** future
+
+### Onboarding & auth
+
+| Task | Priority |
+|---|---|
+| Splash + welcome | P0 |
+| Sign up / sign in / logout | P0 |
+| Session restore | P0 |
+| Password reset | P0 |
+| Currency + reminder defaults onboarding | P0 |
+| Notification permission education | P1 |
+| Social auth | P2 |
+| Biometrics | P3 |
+
+### Subscriptions CRUD
+
+| Task | Priority |
+|---|---|
+| Create subscription (required fields) | P0 |
+| List + detail | P0 |
+| Edit / delete | P0 |
+| Billing cycles (weekly/monthly/yearly/custom) | P0 |
+| Categories | P0 |
+| Templates catalog | P1 |
+| Archive / cancel status | P0 |
+| Notes + manage URL | P1 |
+| Attach payment method label | P1 |
+| Attachments / receipts | P3 |
+
+### Home & upcoming
+
+| Task | Priority |
+|---|---|
+| Monthly / yearly total | P0 |
+| Upcoming charges section | P0 |
+| Due soon highlighting | P0 |
+| FAB add | P0 |
+| Pull to refresh | P0 |
+
+### Reminders
+
+| Task | Priority |
+|---|---|
+| Per-subscription reminder toggle | P0 |
+| Reminder offsets (same day / 1 / 3 / 7 days) | P0 |
+| Push / local notification scheduling | P0 |
+| Deep link from notification | P0 |
+| Snooze | P1 |
+| Global default reminder prefs | P1 |
+| Smart unused nudges | P2 |
+
+### Insights
+
+| Task | Priority |
+|---|---|
+| Category spend breakdown | P1 |
+| Monthly vs yearly toggle | P1 |
+| Trends | P2 |
+| Export CSV/PDF | P2 |
+
+### Premium
+
+| Task | Priority |
+|---|---|
+| Entitlement model + paywall UI | P1 |
+| IAP purchase + restore | P1 |
+| Free tier limits (define ethically) | P1 |
+| Premium insights / unlimited / advanced reminders | P1–P2 |
+| Family plan | P3 |
+
+### Settings & platform
+
+| Task | Priority |
+|---|---|
+| Profile / currency / formats | P0 |
+| Notification settings | P0 |
+| Legal pages | P0 |
+| Delete account / export data | P0 (compliance) |
+| Force update | P1 |
+| Import from spreadsheet / bank | P2 |
+| Widgets | P2 |
+| Wearables | P3 |
+
+### Quality
+
+| Task | Priority |
+|---|---|
+| Offline read cache | P0 |
+| Error reporting (Sentry etc.) | P0 |
+| Analytics events (privacy-aware) | P1 |
+| E2E smoke tests critical flows | P1 |
+
+---
+
+## 10. Backend Planning
+
+REST APIs by module (purpose only—no implementation).
+
+### Health / system
+- `GET /health` — liveness  
+- `GET /version` — app compatibility metadata  
+
+### Auth
+- `POST /auth/register` — create account  
+- `POST /auth/login` — authenticate  
+- `POST /auth/refresh` — refresh session  
+- `POST /auth/logout` — revoke session  
+- `POST /auth/forgot-password` — start reset  
+- `POST /auth/reset-password` — complete reset  
+- `GET /auth/me` — current user  
+
+### Users / profile
+- `GET /users/me` — profile + preferences  
+- `PATCH /users/me` — update profile/prefs  
+- `DELETE /users/me` — delete account  
+- `GET /users/me/export` — data export  
+
+### Subscriptions
+- `GET /subscriptions` — list (filter, sort, pagination)  
+- `POST /subscriptions` — create  
+- `GET /subscriptions/:id` — detail  
+- `PATCH /subscriptions/:id` — update  
+- `DELETE /subscriptions/:id` — delete  
+- `POST /subscriptions/:id/archive` — cancel/archive  
+- `POST /subscriptions/:id/restore` — restore archived  
+
+### Catalog / templates
+- `GET /templates` — popular subscription templates  
+
+### Reminders
+- `GET /reminders` — upcoming reminder schedule for user  
+- `PUT /subscriptions/:id/reminder` — set reminder rule  
+- `POST /reminders/:id/ack` — acknowledge / snooze outcome sync  
+
+### Insights
+- `GET /insights/summary` — totals for period  
+- `GET /insights/by-category` — category breakdown  
+
+### Billing / Premium
+- `GET /billing/entitlements` — current Premium state  
+- `POST /billing/verify` — verify store receipt / play purchase  
+- `POST /billing/restore` — restore purchases  
+
+### Notifications device
+- `POST /devices` — register push token  
+- `DELETE /devices/:id` — unregister  
+
+### Admin / ops (later)
+- Feature flags, template CMS—out of MVP client scope  
+
+---
+
+## 11. Database Planning
+
+High-level collections (MongoDB), relationships, ownership—no schemas.
+
+| Collection | Owns | Relates to | Notes |
+|---|---|---|---|
+| **users** | Account identity, prefs, currency, default reminder | 1?N subscriptions, devices, entitlements | Source of truth for account |
+| **subscriptions** | Tracked subscription records | N?1 user; optional templateId | User-owned; soft delete/archive fields conceptually |
+| **templates** | Global catalog of known services | Referenced by subscriptions | System-owned content |
+| **reminder_rules** | Reminder configuration | 1?1 or embedded in subscription | Prefer embed for MVP simplicity; split if rules grow |
+| **reminder_events** | Delivery / ack / snooze history | N?1 subscription/user | Useful for audit & support |
+| **devices** | Push tokens & platform | N?1 user | User-owned devices |
+| **entitlements** | Premium status | 1?1 user | Derived from store + verified receipts |
+| **purchase_events** | Store transaction log | N?1 user | Audit / restore support |
+| **sessions** / refresh tokens | Auth sessions | N?1 user | Or use external auth provider later |
+
+**Relationships (conceptual)**
+- User **has many** Subscriptions  
+- User **has many** Devices  
+- User **has one** Entitlement state  
+- Subscription **may reference** Template  
+- Subscription **has** Reminder rule (embedded or linked)  
+- Reminder events **belong to** Subscription + User  
+
+**Data ownership**
+- All user financial tracking data is **user-owned** and exportable/deletable  
+- Templates are **platform-owned**  
+- Purchase verification artifacts are **platform-owned** with user linkage  
+
+---
+
+## 12. Engineering Standards
+
+### Folder organization philosophy
+
+**Mobile:** feature-aware but foundation-compatible  
+- `app/` routes only (Expo Router)  
+- `components/` reusable UI primitives  
+- `features/<name>/` (screens logic, hooks, local components) as features land  
+- `services/` API clients  
+- `hooks/` shared hooks  
+- `constants/` tokens & config  
+- `utils/` pure helpers  
+- Keep business logic out of route files  
+
+**Backend:** existing layered structure  
+- `routes` ? `controllers` ? `services` ? `models`  
+- `middleware` for auth, validation, errors  
+- `config` for env/db  
+- No business logic in routes  
+
+### Naming conventions
+
+| Area | Convention |
+|---|---|
+| React components | `PascalCase.tsx` |
+| Hooks | `useCamelCase.ts` |
+| Screens (routes) | Expo Router file names: `index`, `[id]`, etc. |
+| Mobile services | `camelCase.ts` (`subscriptionService.ts`) |
+| Backend files | `camelCase.js` or domain `subscription.controller.js` (pick one and stick) |
+| REST resources | plural nouns `/subscriptions` |
+| Env vars | `SCREAMING_SNAKE` |
+| Design tokens | `category.role` (`color.text.primary`) |
+
+### API response standards
+
+**Success**
+```json
+{ "data": {}, "meta": {} }
+```
+
+**List**
+```json
+{ "data": [], "meta": { "page": 1, "limit": 20, "total": 100 } }
+```
+
+**Error**
+```json
+{ "error": { "code": "SUBSCRIPTION_NOT_FOUND", "message": "Human readable", "details": {} } }
+```
+
+- Use consistent HTTP status codes  
+- Never leak stack traces  
+- Dates: ISO-8601 UTC  
+- Money: integer minor units **or** string decimal + currency code (choose one globally; prefer minor units for safety)  
+
+### Error handling strategy
+
+- Central Express error middleware  
+- Typed error codes mapped to HTTP  
+- Mobile: map codes ? user-friendly copy; fallback generic  
+- Retry idempotent GETs; careful POST retries with idempotency keys later  
+- Log with request id; correlate client ? server  
+
+### Git workflow
+
+- `main` — production-ready  
+- `develop` — integration (optional if small team; else `main` + PRs)  
+- Feature branches from `main`/`develop`  
+- PR required; CI must pass  
+- No force-push to `main`  
+
+### Branch naming
+
+- `feat/short-description`  
+- `fix/short-description`  
+- `chore/short-description`  
+- `docs/short-description`  
+- `refactor/short-description`  
+
+### Commit conventions
+
+Conventional Commits:
+
+- `feat: add subscription list screen`  
+- `fix: correct next billing date timezone`  
+- `chore: update expo deps`  
+- `docs: add phase 2 planning notes`  
+- `refactor: extract amount formatting helper`  
+
+Subject ? ~72 chars; explain **why** in body when non-obvious.
+
+---
+
+## 13. Development Roadmap
+
+### Milestone 0 — Align (this phase)
+- [ ] Approve vision, brand direction, IA, MVP screen cut  
+- [ ] Freeze P0 feature list and free/Premium boundary  
+- [ ] Define money/date/timezone rules  
+
+### Milestone 1 — Design system & app shell
+- [ ] Tokens (color, type, space, radius, elevation)  
+- [ ] Core components in isolation  
+- [ ] Tab shell + placeholder screens  
+- [ ] Theming and a11y baseline  
+
+### Milestone 2 — Auth & user preferences
+- [ ] Auth APIs + mobile auth flows  
+- [ ] Session persistence  
+- [ ] Profile/currency prefs  
+
+### Milestone 3 — Subscriptions MVP core
+- [ ] Subscription APIs + Mongo collections  
+- [ ] Create / list / detail / edit / delete / archive  
+- [ ] Home totals + upcoming  
+- [ ] Templates (light)  
+
+### Milestone 4 — Reminders
+- [ ] Reminder rules  
+- [ ] Scheduling + push/local  
+- [ ] Deep links + snooze/ack  
+
+### Milestone 5 — Insights lite + polish
+- [ ] Category breakdown  
+- [ ] Empty/loading/error/offline pass on all P0 screens  
+- [ ] Accessibility audit  
+
+### Milestone 6 — Premium
+- [ ] Entitlements + store purchase/restore  
+- [ ] Paywall UX  
+- [ ] Gating without dark patterns  
+
+### Milestone 7 — Production readiness
+- [ ] Analytics + crash reporting  
+- [ ] Force update / maintenance  
+- [ ] Legal, delete/export, privacy review  
+- [ ] Performance pass, E2E smoke  
+- [ ] Beta (TestFlight / Play internal)  
+
+### Milestone 8 — Public release
+- [ ] Store listings, screenshots, review responses  
+- [ ] Pricing finalization  
+- [ ] Launch monitoring dashboard  
+- [ ] Post-launch iteration backlog (import, widgets, trends, family)  
+
+---
+
+## MVP cut recommendation (executive)
+
+**In MVP:** auth, subscriptions CRUD, home totals + upcoming, reminders, light insights, settings, ethical Premium scaffolding  
+**Out of MVP:** bank sync, family sharing, advanced AI “unused” detection, widgets, dark-mode-as-brand, social graph  
+
+**Experience bar for ship:** a new user can add three subscriptions, see next month’s total, and trust a reminder before the next charge—without confusion, clutter, or shame.
+
+---
+
+**Phase 2 complete as planning.** Ready for Phase 3 (detailed UX specs / design tokens implementation / feature build) when you give the go-ahead. No code or project files were changed.
