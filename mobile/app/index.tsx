@@ -1,32 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Redirect } from 'expo-router';
 
 /**
- * Foundation placeholder route required by expo-router.
- * No application features are implemented here.
+ * App entry route — forwards into the main tab shell.
+ * Future auth gates can replace this redirect without moving tabs.
  */
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Subscription Tracker</Text>
-      <Text style={styles.subtitle}>Project foundation ready</Text>
-    </View>
-  );
+  return <Redirect href="/(tabs)/home" />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '600',
-  },
-  subtitle: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#666666',
-  },
-});
