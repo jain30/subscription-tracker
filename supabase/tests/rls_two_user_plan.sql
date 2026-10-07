@@ -1,0 +1,45 @@
+-- =============================================================================
+-- PHASE 17 — STEP 2 — Two-user RLS isolation test plan (manual)
+-- Apply against a real Supabase project AFTER the migration.
+-- Do not claim production readiness until every step passes.
+-- =============================================================================
+--
+-- Setup
+-- 1. Apply migration `20260810183000_initial_schema.sql`.
+-- 2. Create User A and User B via Supabase Auth (email/password or dashboard).
+-- 3. Confirm profiles rows exist for both (trigger).
+-- 4. Obtain JWTs / use SQL editor with `set request.jwt.claim.sub`.
+--
+-- Prefer exercising via the authenticated PostgREST API (anon key + user
+-- access token), which is the same path the mobile app will use.
+--
+-- ---------------------------------------------------------------------------
+-- Test matrix
+-- ---------------------------------------------------------------------------
+--  1. A creates a subscription with user_id = A          → success
+--  2. A selects own subscription                         → success (sees row)
+--  3. A updates own subscription (name/price/etc.)       → success
+--  4. A deletes own subscription                         → success
+--  5. B selects A's subscription id                      → empty / not found
+--  6. B updates A's subscription                         → 0 rows / denied
+--  7. B deletes A's subscription                         → 0 rows / denied
+--  8. B inserts subscription with user_id = A            → RLS violation
+--  9. A updates own row SET user_id = B                  → RLS violation
+-- 10. B selects/updates A's profile                      → empty / denied
+-- 11. Logout (drop JWT) then query subscriptions         → denied / empty
+-- 12. Re-auth as A                                       → only A's data
+--
+-- Additional integrity checks
+-- - Insert price = -1                                    → CHECK failure
+-- - Insert currency = 'XYZ'                              → CHECK failure
+-- - Insert billing_cycle = 'Monthly' (Title Case)        → CHECK failure
+-- - Insert reminder_offset = '1 day before'              → CHECK failure
+-- - Confirm updated_at changes on UPDATE without client sending it
+-- - Delete auth user A                                   → profile + subs CASCADE
+--
+-- Example (SQL editor — run as authenticated role simulation is limited;
+-- use the API for authoritative RLS tests):
+--
+--   -- As service role (bypasses RLS) only for fixture setup / cleanup.
+--   -- NEVER put service_role in the mobile app.
+-- =============================================================================
