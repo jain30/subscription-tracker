@@ -36,21 +36,21 @@ export function LoadingSkeleton({
 
   useEffect(() => {
     if (reduceMotion) {
-      opacity.setValue(0.72);
+      opacity.setValue(0.7);
       return;
     }
 
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, {
-          toValue: 0.45,
-          duration: 700,
+          toValue: 0.4,
+          duration: 850,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 700,
+          duration: 850,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
@@ -81,13 +81,13 @@ export function LoadingSkeleton({
               opacity,
               backgroundColor: theme.colors.bg.subtle,
               borderRadius:
-                variant === 'avatar' ? theme.radius.full : theme.radius.md,
+                variant === 'avatar' ? theme.radius.full : theme.radius.lg,
               width: dimensions.width,
               height: dimensions.height,
               marginBottom:
                 index < itemCount - 1
                   ? variant === 'row'
-                    ? theme.spacing[3]
+                    ? theme.spacing[2]
                     : theme.spacing[2]
                   : 0,
             },
@@ -126,12 +126,12 @@ function resolveDimensions(
     case 'row':
       return {
         width: width ?? '100%',
-        height: height ?? theme.layout.listRowMinHeight,
+        height: height ?? theme.layout.listRowHeight,
       };
     case 'card':
       return {
         width: width ?? '100%',
-        height: height ?? theme.spacing[16] + theme.spacing[8],
+        height: height ?? theme.spacing[16] + theme.spacing[10],
       };
     case 'text':
     default:

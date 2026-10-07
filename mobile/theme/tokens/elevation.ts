@@ -14,8 +14,8 @@ type ElevationLevel = 0 | 1 | 2 | 3;
 const shadowInk = palette.ink;
 
 /**
- * iOS shadowOpacity approximates blueprint opacity:
- * Level 1 ~6%, Level 2 ~10%, Level 3 ~16%.
+ * Soft cool-ink shadows — large blur, modest offset, low opacity.
+ * Level 1 ~5%, Level 2 ~8%, Level 3 ~12%.
  */
 const iosShadows: Record<ElevationLevel, ViewStyle> = {
   0: {
@@ -26,29 +26,29 @@ const iosShadows: Record<ElevationLevel, ViewStyle> = {
   },
   1: {
     shadowColor: shadowInk,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
   },
   2: {
     shadowColor: shadowInk,
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.1,
-    shadowRadius: 16,
+    shadowRadius: 20,
   },
   3: {
     shadowColor: shadowInk,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.16,
-    shadowRadius: 32,
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.14,
+    shadowRadius: 36,
   },
 };
 
 const androidElevation: Record<ElevationLevel, ViewStyle> = {
   0: { elevation: 0 },
   1: { elevation: 2 },
-  2: { elevation: 4 },
-  3: { elevation: 8 },
+  2: { elevation: 5 },
+  3: { elevation: 10 },
 };
 
 /**

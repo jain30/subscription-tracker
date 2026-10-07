@@ -39,9 +39,9 @@ export function EmptyState({
           flexGrow: 1,
           alignItems: 'center',
           justifyContent: 'center',
-          paddingVertical: theme.spacing[10],
-          paddingHorizontal: theme.spacing[4],
-          gap: theme.spacing[4],
+          paddingVertical: theme.spacing[12],
+          paddingHorizontal: theme.spacing[5],
+          gap: theme.spacing[3],
         },
         style,
       ]}
@@ -50,16 +50,26 @@ export function EmptyState({
         <View
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
-          style={{ marginBottom: theme.spacing[2] }}
+          style={{
+            width: theme.spacing[16] + theme.spacing[4],
+            height: theme.spacing[16] + theme.spacing[4],
+            borderRadius: theme.radius.xl,
+            backgroundColor: theme.colors.bg.brandWash,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: theme.spacing[3],
+            borderWidth: 1,
+            borderColor: theme.colors.brand.soft,
+          }}
         >
           {illustration}
         </View>
       ) : null}
 
       <AppText
-        variant="title2"
+        variant="display"
         color="primary"
-        style={{ textAlign: 'center' }}
+        style={{ textAlign: 'center', fontSize: 28, lineHeight: 34 }}
       >
         {title}
       </AppText>
@@ -68,7 +78,7 @@ export function EmptyState({
         <AppText
           variant="callout"
           color="secondary"
-          style={{ textAlign: 'center', maxWidth: 320 }}
+          style={{ textAlign: 'center', maxWidth: 300 }}
         >
           {description}
         </AppText>
@@ -78,9 +88,9 @@ export function EmptyState({
         <View
           style={{
             width: '100%',
-            maxWidth: 320,
+            maxWidth: 300,
             gap: theme.layout.stackedCtaGap,
-            marginTop: theme.spacing[2],
+            marginTop: theme.spacing[5],
           }}
         >
           {action ? (

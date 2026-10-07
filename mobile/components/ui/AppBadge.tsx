@@ -55,7 +55,7 @@ export function AppBadge({
           alignSelf: 'flex-start',
           backgroundColor: tone.backgroundColor,
           borderRadius: theme.radius.sm,
-          paddingHorizontal: theme.spacing[2],
+          paddingHorizontal: theme.spacing[2] + 2,
           paddingVertical: theme.spacing[1],
         },
         style,

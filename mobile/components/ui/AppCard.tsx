@@ -37,8 +37,8 @@ export function AppCard(props: AppCardProps) {
 
   const baseStyle: ViewStyle = {
     backgroundColor: theme.colors.bg.surface,
-    borderRadius: theme.radius.lg,
-    padding: theme.spacing[4],
+    borderRadius: theme.radius.xl,
+    padding: theme.spacing[5],
     borderWidth: variant === 'flat' ? 1 : 0,
     borderColor: theme.colors.border,
     ...(variant === 'elevated' ? theme.elevation.card : theme.elevation.none),
@@ -54,7 +54,10 @@ export function AppCard(props: AppCardProps) {
         accessibilityRole={pressableProps.accessibilityRole ?? 'button'}
         style={({ pressed }) => [
           baseStyle,
-          pressed && { backgroundColor: theme.colors.bg.subtle },
+          pressed && {
+            backgroundColor: theme.colors.bg.subtle,
+            transform: [{ scale: 0.99 }],
+          },
           style,
         ]}
       >

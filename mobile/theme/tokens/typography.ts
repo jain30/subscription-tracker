@@ -44,28 +44,32 @@ export const typography = {
   display: {
     fontFamily: fontFamily.display.semibold,
     fontSize: 34,
-    lineHeight: lh(34, 1.25),
+    lineHeight: lh(34, 1.2),
+    letterSpacing: -0.4,
   } satisfies TextStyleToken,
 
   /** Screen titles */
   title1: {
     fontFamily: fontFamily.sans.semibold,
     fontSize: 28,
-    lineHeight: lh(28, 1.25),
+    lineHeight: lh(28, 1.2),
+    letterSpacing: -0.35,
   } satisfies TextStyleToken,
 
   /** Section headers */
   title2: {
     fontFamily: fontFamily.sans.semibold,
-    fontSize: 22,
-    lineHeight: lh(22, 1.25),
+    fontSize: 20,
+    lineHeight: lh(20, 1.25),
+    letterSpacing: -0.2,
   } satisfies TextStyleToken,
 
   /** Card / row titles */
   title3: {
     fontFamily: fontFamily.sans.medium,
-    fontSize: 18,
-    lineHeight: lh(18, 1.3),
+    fontSize: 17,
+    lineHeight: lh(17, 1.3),
+    letterSpacing: -0.15,
   } satisfies TextStyleToken,
 
   /** Primary content */
@@ -73,6 +77,7 @@ export const typography = {
     fontFamily: fontFamily.sans.regular,
     fontSize: 16,
     lineHeight: lh(16, 1.45),
+    letterSpacing: -0.1,
   } satisfies TextStyleToken,
 
   /** Emphasized body */
@@ -80,6 +85,7 @@ export const typography = {
     fontFamily: fontFamily.sans.medium,
     fontSize: 16,
     lineHeight: lh(16, 1.45),
+    letterSpacing: -0.1,
   } satisfies TextStyleToken,
 
   /** Secondary paragraphs */
@@ -87,6 +93,7 @@ export const typography = {
     fontFamily: fontFamily.sans.regular,
     fontSize: 15,
     lineHeight: lh(15, 1.45),
+    letterSpacing: -0.05,
   } satisfies TextStyleToken,
 
   /** List meta */
@@ -94,6 +101,7 @@ export const typography = {
     fontFamily: fontFamily.sans.medium,
     fontSize: 14,
     lineHeight: lh(14, 1.4),
+    letterSpacing: -0.05,
   } satisfies TextStyleToken,
 
   /** Helper text */
@@ -108,22 +116,25 @@ export const typography = {
     fontFamily: fontFamily.sans.medium,
     fontSize: 12,
     lineHeight: lh(12, 1.35),
+    letterSpacing: 0.1,
   } satisfies TextStyleToken,
 
   /** Monthly total — tabular nums */
   amountLg: {
     fontFamily: fontFamily.sans.semibold,
-    fontSize: 32,
-    lineHeight: lh(32, 1.2),
+    fontSize: 40,
+    lineHeight: lh(40, 1.1),
     fontVariant: ['tabular-nums'],
+    letterSpacing: -0.8,
   } satisfies TextStyleToken,
 
   /** Row amounts — tabular nums */
   amountMd: {
     fontFamily: fontFamily.sans.semibold,
-    fontSize: 18,
-    lineHeight: lh(18, 1.2),
+    fontSize: 17,
+    lineHeight: lh(17, 1.2),
     fontVariant: ['tabular-nums'],
+    letterSpacing: -0.2,
   } satisfies TextStyleToken,
 
   /** Compact money — tabular nums */
@@ -132,6 +143,7 @@ export const typography = {
     fontSize: 14,
     lineHeight: lh(14, 1.2),
     fontVariant: ['tabular-nums'],
+    letterSpacing: -0.1,
   } satisfies TextStyleToken,
 
   /** Button labels */
@@ -139,6 +151,7 @@ export const typography = {
     fontFamily: fontFamily.sans.semibold,
     fontSize: 16,
     lineHeight: lh(16, 1.25),
+    letterSpacing: -0.1,
   } satisfies TextStyleToken,
 
   /** Compact button labels */
@@ -146,6 +159,7 @@ export const typography = {
     fontFamily: fontFamily.sans.semibold,
     fontSize: 14,
     lineHeight: lh(14, 1.25),
+    letterSpacing: -0.05,
   } satisfies TextStyleToken,
 } as const;
 

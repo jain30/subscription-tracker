@@ -1,9 +1,9 @@
 import { Redirect } from 'expo-router';
 
 /**
- * App entry route — forwards into the main tab shell.
- * Future auth gates can replace this redirect without moving tabs.
+ * App entry — always hand off to the brand splash.
+ * Splash resolves Supabase session / onboarding and routes onward.
  */
 export default function Index() {
-  return <Redirect href="/(tabs)/home" />;
+  return <Redirect href="/(auth)/splash" />;
 }

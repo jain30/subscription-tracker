@@ -97,21 +97,21 @@ export function AppInput({
   return (
     <View style={[{ gap: theme.spacing[2] }, containerStyle]}>
       {label ? (
-        <AppText variant="subhead" color="primary" nativeID={`${inputId}-label`}>
+        <AppText variant="subhead" color="secondary" nativeID={`${inputId}-label`}>
           {label}
         </AppText>
       ) : null}
 
       <View
         style={{
-          minHeight: theme.layout.listRowMinHeight,
+          minHeight: theme.layout.listRowHeight,
           flexDirection: 'row',
-          alignItems: 'center',
+          alignItems: rest.multiline ? 'flex-start' : 'center',
           gap: theme.spacing[2],
-          paddingHorizontal: theme.spacing[3],
-          borderWidth: 1,
+          paddingHorizontal: theme.spacing[4],
+          borderWidth: focused || hasError ? 1.5 : 1,
           borderColor,
-          borderRadius: theme.radius.sm,
+          borderRadius: theme.radius.md,
           backgroundColor: disabled
             ? theme.colors.bg.subtle
             : theme.colors.bg.surface,
@@ -121,6 +121,7 @@ export function AppInput({
           <View
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
+            style={rest.multiline ? { paddingTop: theme.spacing[3] } : undefined}
           >
             {leftIcon}
           </View>
@@ -146,6 +147,9 @@ export function AppInput({
             {
               flex: 1,
               paddingVertical: theme.spacing[3],
+              minHeight: rest.multiline
+                ? theme.spacing[16]
+                : undefined,
               color: theme.colors.text.primary,
               opacity: disabled ? 0.6 : 1,
             },

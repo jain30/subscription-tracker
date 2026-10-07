@@ -33,11 +33,12 @@ export function AppHeader({
     <View
       style={[
         {
-          minHeight: theme.layout.touchTargetComfortable,
+          minHeight: theme.layout.touchTargetComfortable + theme.spacing[2],
           flexDirection: 'row',
           alignItems: 'center',
           gap: theme.spacing[2],
           paddingVertical: theme.spacing[2],
+          marginBottom: theme.spacing[1],
         },
         style,
       ]}
@@ -54,7 +55,7 @@ export function AppHeader({
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: theme.radius.md,
-            opacity: pressed ? 0.7 : 1,
+            backgroundColor: pressed ? theme.colors.bg.subtle : 'transparent',
           })}
         >
           <ChevronLeft
@@ -68,7 +69,7 @@ export function AppHeader({
       )}
 
       <AppText
-        variant="title3"
+        variant="title2"
         color="primary"
         numberOfLines={1}
         style={{ flex: 1 }}

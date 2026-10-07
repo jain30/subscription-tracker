@@ -48,14 +48,14 @@ export function AppButton({
 
   const heights: Record<AppButtonSize, number> = {
     sm: theme.layout.touchTargetMin,
-    md: 48,
-    lg: 52,
+    md: 50,
+    lg: 54,
   };
 
   const horizontalPadding: Record<AppButtonSize, number> = {
     sm: theme.spacing[3],
-    md: theme.spacing[4],
-    lg: theme.spacing[5],
+    md: theme.spacing[5],
+    lg: theme.spacing[6],
   };
 
   const textVariant = size === 'sm' ? 'buttonSm' : 'button';
@@ -67,6 +67,7 @@ export function AppButton({
       bgDisabled: theme.colors.brand.soft,
       text: 'onBrand' as const,
       border: 'transparent',
+      borderWidth: 0,
     },
     secondary: {
       bg: theme.colors.bg.surface,
@@ -74,6 +75,7 @@ export function AppButton({
       bgDisabled: theme.colors.bg.subtle,
       text: 'primary' as const,
       border: theme.colors.border,
+      borderWidth: 1,
     },
     ghost: {
       bg: 'transparent',
@@ -81,20 +83,24 @@ export function AppButton({
       bgDisabled: 'transparent',
       text: 'brand' as const,
       border: 'transparent',
+      borderWidth: 0,
     },
     destructive: {
-      bg: theme.colors.danger,
-      bgPressed: theme.colors.danger,
-      bgDisabled: theme.colors.status.overdue,
-      text: 'inverse' as const,
+      bg: theme.colors.status.overdue,
+      bgPressed: theme.colors.status.overdue,
+      bgDisabled: theme.colors.bg.subtle,
+      text: 'danger' as const,
       border: 'transparent',
+      borderWidth: 0,
     },
   }[variant];
 
   const spinnerColor =
-    variant === 'primary' || variant === 'destructive'
+    variant === 'primary'
       ? theme.colors.text.inverse
-      : theme.colors.brand.primary;
+      : variant === 'destructive'
+        ? theme.colors.danger
+        : theme.colors.brand.primary;
 
   return (
     <Pressable
@@ -117,9 +123,14 @@ export function AppButton({
             : pressed
               ? paletteByVariant.bgPressed
               : paletteByVariant.bg,
-          borderWidth: variant === 'secondary' ? 1 : 0,
+          borderWidth: paletteByVariant.borderWidth,
           borderColor: paletteByVariant.border,
-          opacity: isDisabled ? 0.6 : pressed && variant === 'destructive' ? 0.88 : 1,
+          opacity: isDisabled
+            ? 0.55
+            : pressed && variant === 'destructive'
+              ? 0.88
+              : 1,
+          transform: pressed && !isDisabled ? [{ scale: 0.985 }] : undefined,
           alignSelf: fullWidth ? 'stretch' : 'auto',
           width: fullWidth ? '100%' : undefined,
         },
@@ -131,7 +142,9 @@ export function AppButton({
       ) : (
         <AppText
           variant={textVariant}
-          color={isDisabled && variant === 'ghost' ? 'tertiary' : paletteByVariant.text}
+          color={
+            isDisabled && variant === 'ghost' ? 'tertiary' : paletteByVariant.text
+          }
         >
           {label}
         </AppText>

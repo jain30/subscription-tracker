@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import {
   ScrollView,
   View,
+  type RefreshControlProps,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
@@ -21,6 +22,8 @@ export type ScreenContainerProps = {
   contentStyle?: StyleProp<ViewStyle>;
   /** Background role from theme */
   background?: 'app' | 'surface';
+  /** Optional RefreshControl when `scroll` is true */
+  refreshControl?: ReactElement<RefreshControlProps>;
 };
 
 /**
@@ -35,6 +38,7 @@ export function ScreenContainer({
   style,
   contentStyle,
   background = 'app',
+  refreshControl,
 }: ScreenContainerProps) {
   const { theme } = useTheme();
 
@@ -47,11 +51,14 @@ export function ScreenContainer({
 
   const body = scroll ? (
     <ScrollView
-      keyboardShouldPersistTaps="handled"
+      keyboardShouldPersistTaps="always"
+      keyboardDismissMode="on-drag"
+      showsVerticalScrollIndicator={false}
+      refreshControl={refreshControl}
       contentContainerStyle={[
         {
           flexGrow: 1,
-          paddingBottom: theme.spacing[8],
+          paddingBottom: theme.spacing[10],
         },
         paddingStyle,
         contentStyle,

@@ -7,26 +7,26 @@
 
 export const palette = {
   /** Soft cool gray app canvas */
-  fog: '#F3F6F8',
+  fog: '#F2F5F7',
   /** Soft teal wash for splash / brand moments */
-  mist: '#E6F4F2',
+  mist: '#E4F3F1',
   white: '#FFFFFF',
   /** Grouped backgrounds / chips */
-  mistGray: '#E8EEF2',
+  mistGray: '#E7EDF1',
   /** Near-ink primary text */
-  ink: '#0F1C24',
-  slate: '#5B6B76',
-  muted: '#8A9AA6',
+  ink: '#0E1A21',
+  slate: '#5A6A75',
+  muted: '#8797A3',
   /** Deep teal brand */
-  teal: '#0B6E6A',
-  tealPressed: '#085652',
-  tealSoft: '#D7F0EE',
+  teal: '#0A6B67',
+  tealPressed: '#07514E',
+  tealSoft: '#D4EFED',
   /** Premium / rare emphasis */
-  amber: '#C9832A',
-  success: '#1F8A5B',
-  warning: '#C47A12',
-  danger: '#C23B3B',
-  border: '#D5DEE5',
+  amber: '#C27D28',
+  success: '#1E8558',
+  warning: '#BF7611',
+  danger: '#B83A3A',
+  border: '#D2DBE2',
 } as const;
 
 /**
@@ -65,15 +65,33 @@ export const colors = {
   overlay: 'rgba(15, 28, 36, 0.4)',
   /**
    * Muted category accents — soft pastels on a shared neutral base.
+   * Keep in sync with `features/subscriptions/catalog/categories`.
    * Never use as the sole status indicator; pair with label/icon.
    */
   category: {
-    streaming: '#E8D5F2',
+    entertainment: '#E8D5F2',
+    music: '#F5D0E8',
+    video_streaming: '#D9D4F7',
+    cloud_storage: '#D5EAF7',
     productivity: '#D5E4F7',
+    education: '#D7ECF5',
+    fitness: '#D9F2DE',
     health: '#D7F0E4',
-    finance: '#F5E6C8',
+    gaming: '#E0D7F5',
     shopping: '#F5D9D6',
+    finance: '#F5E6C8',
+    news: '#E4E8F0',
+    developer_tools: '#D6E8E4',
+    ai_tools: '#E6D9F5',
+    business: '#DCE4F0',
+    food: '#F5E0D0',
+    travel: '#D5EEF5',
+    utilities: '#E8EEF2',
+    security: '#D8E8F0',
+    kids: '#F5E8D5',
     other: '#E8EEF2',
+    /** @deprecated legacy alias — prefer video_streaming */
+    streaming: '#D9D4F7',
   },
   /**
    * Status fills (muted). Always pair with a text label.
