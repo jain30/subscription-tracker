@@ -92,7 +92,7 @@ describe('formValuesToUpdate (Phase 20 UPDATE transport)', () => {
     expect(payload.status).toBe('trial');
   });
 
-  it('builds a full cancel upsert payload (status canceled, all required columns)', () => {
+  it('builds a full cancel update payload (status canceled, all required columns)', () => {
     const existing = makeExisting({ status: 'active', name: 'Spotify' });
     const values = subscriptionToFormValues(existing);
     values.status = 'canceled';

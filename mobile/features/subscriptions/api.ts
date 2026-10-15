@@ -2,11 +2,12 @@
  * Supabase Postgres subscription data access (Phase 17 Step 4).
  * Authorization is enforced by RLS (auth.uid()); this module does not trust activeUserId.
  *
- * Edit + Cancel share the mutate-existing-row path. Prefer PostgREST upsert (HTTP POST
- * + Prefer: resolution=merge-duplicates) over `.update()` (HTTP PATCH): some browser
- * environments block PATCH and surface that as Failed to fetch / NETWORK while
- * POST insert and DELETE still succeed. Upsert-on-primary-key preserves RLS ownership
- * and only merges the columns we send (never client-controlled user_id).
+ * Edit uses PostgREST upsert (HTTP POST + Prefer: resolution=merge-duplicates)
+ * rather than `.update()` (HTTP PATCH): some browser environments block PATCH
+ * and surface that as Failed to fetch / NETWORK while POST insert and DELETE
+ * still succeed. Upsert-on-primary-key preserves RLS ownership and only merges
+ * the columns we send (never client-controlled user_id).
+ * Cancel does not use that path; it updates the existing row by id.
  */
 
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
@@ -138,8 +139,9 @@ export async function updateSubscriptionRemote(
  * Soft-cancel: keep the row, set status = canceled.
  * Does not cancel the real-world merchant subscription — tracker only.
  *
- * Sends a full-row upsert (not a partial `{ status }` patch): PostgREST upsert is
- * INSERT … ON CONFLICT, and a sparse body fails NOT NULL checks before merge.
+ * Targeted UPDATE by id, not upsert. Upsert is INSERT … ON CONFLICT and can
+ * fail the privilege check that a column-scoped UPDATE of an owned row does
+ * not. The body stays a full formValuesToUpdate payload (no user_id).
  */
 export async function cancelSubscriptionRemote(
   id: string,
@@ -156,11 +158,10 @@ export async function cancelSubscriptionRemote(
     throw mapSubscriptionError(error);
   }
 
-  const row = { id, ...payload } as SubscriptionInsert;
-
   const { data, error, status } = await supabase
     .from('subscriptions')
-    .upsert(row, { onConflict: 'id' })
+    .update(payload)
+    .eq('id', id)
     .select(SUBSCRIPTION_SELECT)
     .maybeSingle();
 
