@@ -9,7 +9,6 @@ export type InsightsHeroProps = {
   monthlySpend: string;
   yearlySpend: string;
   activeCount: string;
-  averageCost: string;
   trendLabel: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -21,7 +20,6 @@ export function InsightsHero({
   monthlySpend,
   yearlySpend,
   activeCount,
-  averageCost,
   trendLabel,
   style,
 }: InsightsHeroProps) {
@@ -41,7 +39,7 @@ export function InsightsHero({
     <View
       accessible
       accessibilityRole="summary"
-      accessibilityLabel={`Monthly spend ${monthlySpend}, yearly ${yearlySpend}, ${activeCount} active, average ${averageCost}, ${trendLabel}`}
+      accessibilityLabel={`Monthly spend ${monthlySpend}, yearly ${yearlySpend}, ${activeCount} active, ${trendLabel}`}
       style={[
         {
           borderRadius: 28,
@@ -130,7 +128,6 @@ export function InsightsHero({
         >
           <MetricChip label="Yearly" value={yearlySpend} />
           <MetricChip label="Active" value={activeCount} />
-          <MetricChip label="Average" value={averageCost} />
         </View>
       </LinearGradient>
     </View>

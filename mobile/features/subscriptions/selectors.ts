@@ -173,7 +173,6 @@ export type InsightsDashboardView = {
   monthlySpend: string;
   yearlySpend: string;
   activeCount: string;
-  averageCost: string;
   trendLabel: string;
   categories: InsightsCategorySlice[];
   trend: InsightsTrendPoint[];
@@ -331,26 +330,10 @@ export function selectInsightsDashboard(
     },
   ];
 
-  // Average cost only when a single currency exists among chargeable items.
-  let averageCost = formatCurrency(0, 'USD');
-  if (
-    summary.monthlyByCurrency.length === 1 &&
-    summary.counts.chargeable > 0
-  ) {
-    const only = summary.monthlyByCurrency[0];
-    averageCost = formatCurrency(
-      only.amount / summary.counts.chargeable,
-      only.currency,
-    );
-  } else if (summary.monthlyByCurrency.length > 1) {
-    averageCost = 'Mixed currencies';
-  }
-
   return {
     monthlySpend: formatCurrencyTotals(summary.monthlyByCurrency),
     yearlySpend: formatCurrencyTotals(summary.yearlyByCurrency),
     activeCount: String(summary.counts.chargeable),
-    averageCost,
     trendLabel:
       summary.trialsEndingSoon.length > 0
         ? `${summary.trialsEndingSoon.length} trial${summary.trialsEndingSoon.length === 1 ? '' : 's'} ending soon`

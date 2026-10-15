@@ -123,7 +123,6 @@ export default function InsightsScreen() {
                 monthlySpend={data.monthlySpend}
                 yearlySpend={data.yearlySpend}
                 activeCount={data.activeCount}
-                averageCost={data.averageCost}
                 trendLabel={data.trendLabel}
               />
             </AnimatedSection>
