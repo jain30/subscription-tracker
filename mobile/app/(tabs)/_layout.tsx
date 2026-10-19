@@ -1,6 +1,7 @@
 import { Tabs, Redirect, router } from 'expo-router';
 import { ChartColumn, Home, Layers, Settings } from 'lucide-react-native';
 import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TabBarIcon } from '@/components/navigation';
 import { useAuthStore } from '@/features/auth';
@@ -12,11 +13,15 @@ import { useTheme } from '@/theme';
  */
 export default function TabsLayout() {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const session = useAuthStore((state) => state.session);
   const hydrated = useAuthStore((state) => state.hydrated);
   const passwordRecoveryPending = useAuthStore(
     (state) => state.passwordRecoveryPending,
   );
+
+  const bottomInset = Math.max(insets.bottom, 0);
+  const tabHeight = 60 + bottomInset;
 
   if (!hydrated) {
     return (
@@ -45,7 +50,8 @@ export default function TabsLayout() {
           borderTopColor: theme.colors.border,
           borderTopWidth: 1,
           paddingTop: theme.spacing[2],
-          height: 64,
+          paddingBottom: bottomInset > 0 ? bottomInset : theme.spacing[1],
+          height: tabHeight,
         },
         tabBarLabelStyle: {
           fontFamily: theme.typography.caption.fontFamily,

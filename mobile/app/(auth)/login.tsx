@@ -64,6 +64,10 @@ export default function LoginScreen() {
   };
 
   const handleSubmit = async () => {
+    if (submitting) {
+      return;
+    }
+
     const nextErrors = validateLoginForm(values);
     setErrors(nextErrors);
     setFormError(null);

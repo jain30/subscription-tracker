@@ -2,12 +2,9 @@
  * Supabase Postgres subscription data access (Phase 17 Step 4).
  * Authorization is enforced by RLS (auth.uid()); this module does not trust activeUserId.
  *
- * Edit uses PostgREST upsert (HTTP POST + Prefer: resolution=merge-duplicates)
- * rather than `.update()` (HTTP PATCH): some browser environments block PATCH
- * and surface that as Failed to fetch / NETWORK while POST insert and DELETE
- * still succeed. Upsert-on-primary-key preserves RLS ownership and only merges
- * the columns we send (never client-controlled user_id).
- * Cancel does not use that path; it updates the existing row by id.
+ * Both Edit and Cancel use targeted UPDATE by id (`.update(payload).eq('id', id)`).
+ * PostgREST upsert (INSERT ... ON CONFLICT) is avoided because it triggers primary-key
+ * privilege checks on RLS-restricted tables even when only updating mutable columns.
  */
 
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
@@ -16,7 +13,6 @@ import {
   formValuesToInsert,
   formValuesToUpdate,
   rowToSubscription,
-  type SubscriptionInsert,
   type SubscriptionRow,
 } from './dbMappers';
 import { mapSubscriptionError, SubscriptionError } from './errors';
@@ -115,12 +111,10 @@ export async function updateSubscriptionRemote(
     throw mapSubscriptionError(error);
   }
 
-  // Primary-key upsert → POST merge (not PATCH). Omits user_id / timestamps.
-  const row = { id, ...payload } as SubscriptionInsert;
-
   const { data, error, status } = await supabase
     .from('subscriptions')
-    .upsert(row, { onConflict: 'id' })
+    .update(payload)
+    .eq('id', id)
     .select(SUBSCRIPTION_SELECT)
     .maybeSingle();
 

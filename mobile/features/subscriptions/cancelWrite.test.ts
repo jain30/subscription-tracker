@@ -153,7 +153,7 @@ describe('updateSubscriptionRemote write path', () => {
     });
   });
 
-  it('still upserts on the primary key and does not use update', async () => {
+  it('updates by id and does not use upsert', async () => {
     mocks.maybeSingle.mockResolvedValue({
       data: { ...canceledRow(), status: 'active' },
       error: null,
@@ -178,12 +178,13 @@ describe('updateSubscriptionRemote write path', () => {
       makeExisting(),
     );
 
-    expect(mocks.upsert).toHaveBeenCalledTimes(1);
-    expect(mocks.update).not.toHaveBeenCalled();
-    const args = callArgs(mocks.upsert);
-    const row = args[0] as Record<string, unknown>;
-    expect(row.id).toBe(EXISTING_ID);
-    expect(row).not.toHaveProperty('user_id');
-    expect(args[1]).toEqual({ onConflict: 'id' });
+    expect(mocks.update).toHaveBeenCalledTimes(1);
+    expect(mocks.upsert).not.toHaveBeenCalled();
+    expect(mocks.eq).toHaveBeenCalledWith('id', EXISTING_ID);
+    const payload = objectArg(mocks.update);
+    expect(payload.name).toBe('Spotify');
+    expect(payload.status).toBe('active');
+    expect(payload).not.toHaveProperty('id');
+    expect(payload).not.toHaveProperty('user_id');
   });
 });

@@ -67,6 +67,10 @@ export default function RegisterScreen() {
   };
 
   const handleSubmit = async () => {
+    if (submitting) {
+      return;
+    }
+
     const nextErrors = validateRegisterForm(values);
     setErrors(nextErrors);
     setFormError(null);

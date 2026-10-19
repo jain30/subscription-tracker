@@ -15,7 +15,7 @@ export function createEmptyFormValues(): SubscriptionFormValues {
   return {
     name: '',
     price: '',
-    currency: 'USD',
+    currency: 'INR',
     billingCycle: 'Monthly',
     renewalDate: '',
     category: '',

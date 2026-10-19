@@ -1,54 +1,37 @@
 import { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { Alert, Platform, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
 import {
-  Bell,
-  CalendarDays,
-  CircleHelp,
-  Clock3,
   Coins,
-  Download,
-  FileText,
-  Globe2,
   Heart,
   Info,
-  Languages,
-  LifeBuoy,
-  Lock,
   LogOut,
   Mail,
   MessageSquare,
-  RotateCcw,
-  Scale,
   Shield,
-  Star,
   Trash2,
-  Upload,
   UserRound,
-  WalletCards,
 } from 'lucide-react-native';
 
 import { AnimatedSection } from '@/components/insights';
 import {
-  AppearanceCard,
   SettingsFooter,
   SettingsProfileHeader,
   SettingsRow,
   SettingsSectionCard,
-  SettingsSwitchRow,
 } from '@/components/settings';
 import { ConfirmSheet } from '@/components/subscriptions';
 import { AppText, ScreenContainer } from '@/components/ui';
 import { useAuthStore } from '@/features/auth';
-import { mockSettingsSnapshot } from '@/features/settings';
 import { useSubscriptionStore } from '@/features/subscriptions';
 import { useTheme } from '@/theme';
 
 const CONTENT_MAX_WIDTH = 560;
 const SECTION_GAP = 28;
 const APP_VERSION = '1.0.0';
-const COMING_SOON = 'Coming soon';
+const SUPPORT_EMAIL = 'jainpooja.vit@gmail.com';
 
 function initialsFromName(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -62,12 +45,11 @@ function initialsFromName(name: string): string {
 }
 
 /**
- * Settings — approved section structure with honest unavailable controls.
- * Real: profile name/email, subscription count, sign out.
+ * Settings — streamlined, user-first personal finance control center.
+ * Focused on account clarity, INR currency, direct support, and data privacy.
  */
 export default function SettingsScreen() {
   const { theme } = useTheme();
-  const presentation = mockSettingsSnapshot;
   const session = useAuthStore((state) => state.session);
   const logout = useAuthStore((state) => state.logout);
   const [signOutVisible, setSignOutVisible] = useState(false);
@@ -86,6 +68,55 @@ export default function SettingsScreen() {
     subscriptionCount === 1
       ? 'Managing 1 subscription'
       : `Managing ${subscriptionCount} subscriptions`;
+
+  const handleContactSupport = async (type: 'support' | 'feedback' = 'support') => {
+    const isFeedback = type === 'feedback';
+    const subject = encodeURIComponent(
+      isFeedback
+        ? 'Subscription Tracker - Feature Request & Suggestions'
+        : 'Subscription Tracker - Support Request',
+    );
+    const body = encodeURIComponent(
+      `Hi Pooja,\n\n${
+        isFeedback
+          ? 'Here is my feedback/suggestion for Subscription Tracker:'
+          : 'I need help with the following issue:'
+      }\n\n[Write your message here]\n\n---\nAccount: ${profileEmail || 'Not signed in'}\nApp Version: ${APP_VERSION}\nPlatform: ${Platform.OS}`,
+    );
+    const mailtoUrl = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
+
+    if (Platform.OS === 'web') {
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${SUPPORT_EMAIL}&su=${subject}&body=${body}`;
+      if (typeof window !== 'undefined') {
+        const opened = window.open(gmailUrl, '_blank');
+        if (!opened) {
+          window.location.href = mailtoUrl;
+        }
+      }
+      return;
+    }
+
+    try {
+      await Linking.openURL(mailtoUrl);
+    } catch {
+      Alert.alert(
+        'Contact Support',
+        `Feel free to email us directly at:\n\n${SUPPORT_EMAIL}`,
+        [{ text: 'OK' }],
+      );
+    }
+  };
+
+  const handleDeleteAccountRequest = () => {
+    Alert.alert(
+      'Delete Account',
+      `To permanently delete your account and remove all your data, please tap below to email support from your registered address (${profileEmail || 'your email'}). We will process your deletion immediately.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Email Support', onPress: () => void handleContactSupport() },
+      ],
+    );
+  };
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -144,21 +175,23 @@ export default function SettingsScreen() {
             Settings
           </AppText>
           <AppText variant="callout" color="secondary">
-            Control your subscription experience
+            Your account, currency, and data preferences
           </AppText>
         </View>
 
+        {/* Profile Card */}
         <AnimatedSection delay={0}>
           <SettingsProfileHeader
             name={profileName}
             subtitle={profileSubtitle}
-            badge="Signed in"
+            badge="Cloud Synced"
             initials={profileInitials}
           />
         </AnimatedSection>
 
+        {/* Account Details & Currency */}
         <AnimatedSection delay={50} style={{ marginTop: SECTION_GAP }}>
-          <SettingsSectionCard title="Account">
+          <SettingsSectionCard title="Account & Preferences">
             <SettingsRow
               Icon={UserRound}
               label="Full Name"
@@ -173,213 +206,80 @@ export default function SettingsScreen() {
             />
             <SettingsRow
               Icon={Coins}
-              label="Currency"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Globe2}
-              label="Region"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Languages}
-              label="Language"
-              value={COMING_SOON}
+              label="Default Currency"
+              value="₹ INR (Indian Rupee)"
               showChevron={false}
               last
             />
           </SettingsSectionCard>
         </AnimatedSection>
 
-        <AnimatedSection delay={90} style={{ marginTop: SECTION_GAP }}>
-          <AppearanceCard
-            themeValue={presentation.theme}
-            accents={presentation.accents}
-            selectedAccentId={presentation.selectedAccentId}
-            unavailable
-          />
-        </AnimatedSection>
-
-        <AnimatedSection delay={130} style={{ marginTop: SECTION_GAP }}>
-          <SettingsSectionCard title="Notifications">
-            {presentation.notifications.map((item, index) => (
-              <SettingsSwitchRow
-                key={item.id}
-                label={item.label}
-                unavailable
-                last={index === presentation.notifications.length - 1}
-              />
-            ))}
-          </SettingsSectionCard>
-        </AnimatedSection>
-
-        <AnimatedSection delay={170} style={{ marginTop: SECTION_GAP }}>
-          <SettingsSectionCard title="Billing Preferences">
-            <SettingsRow
-              Icon={WalletCards}
-              label="Default currency"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={CalendarDays}
-              label="Billing cycle preference"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Bell}
-              label="First day of month"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Clock3}
-              label="Time zone"
-              value={COMING_SOON}
-              showChevron={false}
-              last
-            />
-          </SettingsSectionCard>
-        </AnimatedSection>
-
-        <AnimatedSection delay={210} style={{ marginTop: SECTION_GAP }}>
-          <SettingsSectionCard title="Data & Privacy">
-            <SettingsRow
-              Icon={Download}
-              label="Export data"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Upload}
-              label="Import subscriptions"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Shield}
-              label="Backup"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Lock}
-              label="Privacy policy"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={FileText}
-              label="Terms"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Scale}
-              label="Permissions"
-              value={COMING_SOON}
-              showChevron={false}
-              last
-            />
-          </SettingsSectionCard>
-        </AnimatedSection>
-
-        <AnimatedSection delay={250} style={{ marginTop: SECTION_GAP }}>
-          <SettingsSectionCard title="Support">
-            <SettingsRow
-              Icon={LifeBuoy}
-              label="Help Center"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={CircleHelp}
-              label="FAQs"
-              value={COMING_SOON}
-              showChevron={false}
-            />
+        {/* Help & Support (Issue 7) */}
+        <AnimatedSection delay={100} style={{ marginTop: SECTION_GAP }}>
+          <SettingsSectionCard title="Help & Support">
             <SettingsRow
               Icon={MessageSquare}
               label="Contact Support"
-              value={COMING_SOON}
-              showChevron={false}
+              value={SUPPORT_EMAIL}
+              showChevron
+              onPress={() => void handleContactSupport('support')}
             />
             <SettingsRow
               Icon={Heart}
               label="Send Feedback"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Star}
-              label="Rate this App"
-              value={COMING_SOON}
-              showChevron={false}
+              value="Suggestions & Ideas"
+              showChevron
+              onPress={() => void handleContactSupport('feedback')}
               last
             />
           </SettingsSectionCard>
         </AnimatedSection>
 
-        <AnimatedSection delay={290} style={{ marginTop: SECTION_GAP }}>
+        {/* Privacy & Security */}
+        <AnimatedSection delay={150} style={{ marginTop: SECTION_GAP }}>
+          <SettingsSectionCard title="Privacy & Security">
+            <SettingsRow
+              Icon={Shield}
+              label="Data Security"
+              value="Row-Level Security (RLS)"
+              showChevron={false}
+              last
+            />
+          </SettingsSectionCard>
+          <View style={{ paddingHorizontal: theme.spacing[2], marginTop: theme.spacing[2] }}>
+            <AppText variant="footnote" color="secondary">
+              Your financial records are isolated to your account. We never share or sell your subscription data.
+            </AppText>
+          </View>
+        </AnimatedSection>
+
+        {/* About */}
+        <AnimatedSection delay={200} style={{ marginTop: SECTION_GAP }}>
           <SettingsSectionCard title="About">
             <SettingsRow
               Icon={Info}
               label="App Version"
-              value={APP_VERSION}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Info}
-              label="Build"
-              value={presentation.about.build}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={UserRound}
-              label="Developer"
-              value={presentation.about.developer}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={FileText}
-              label="Open Source Licenses"
-              value={COMING_SOON}
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Heart}
-              label="Acknowledgements"
-              value={COMING_SOON}
+              value={`${APP_VERSION} (Build 1)`}
               showChevron={false}
               last
             />
           </SettingsSectionCard>
         </AnimatedSection>
 
-        <AnimatedSection delay={330} style={{ marginTop: SECTION_GAP }}>
-          <SettingsSectionCard title="Danger Zone">
-            <SettingsRow
-              Icon={RotateCcw}
-              label="Reset mock data"
-              value={COMING_SOON}
-              destructive
-              showChevron={false}
-            />
-            <SettingsRow
-              Icon={Trash2}
-              label="Delete all subscriptions"
-              value={COMING_SOON}
-              destructive
-              showChevron={false}
-            />
+        {/* Account Actions */}
+        <AnimatedSection delay={250} style={{ marginTop: SECTION_GAP }}>
+          <SettingsSectionCard title="Account Actions">
             <SettingsRow
               Icon={LogOut}
               label="Sign out"
               destructive
               onPress={() => setSignOutVisible(true)}
+            />
+            <SettingsRow
+              Icon={Trash2}
+              label="Delete Account"
+              destructive
+              onPress={handleDeleteAccountRequest}
               last
             />
           </SettingsSectionCard>
@@ -394,7 +294,7 @@ export default function SettingsScreen() {
           ) : null}
         </AnimatedSection>
 
-        <AnimatedSection delay={360}>
+        <AnimatedSection delay={300}>
           <SettingsFooter version={APP_VERSION} />
         </AnimatedSection>
       </ScreenContainer>
