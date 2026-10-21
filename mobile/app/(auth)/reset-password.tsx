@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View } from 'react-native';
+import { useRef, useState } from 'react';
+import { ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
 import { ShieldAlert, ShieldCheck } from 'lucide-react-native';
 
@@ -219,8 +219,16 @@ export default function ResetPasswordScreen() {
     );
   }
 
+  const scrollRef = useRef<ScrollView>(null);
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }, 80);
+  };
+
   return (
-    <AuthScreenShell title="Reset Password" showBack={false}>
+    <AuthScreenShell title="Reset Password" showBack={false} scrollRef={scrollRef}>
       <View style={{ gap: theme.spacing[5], marginTop: theme.spacing[2] }}>
         <View style={{ gap: theme.spacing[2] }}>
           <AppText variant="title1" color="primary">
@@ -241,6 +249,7 @@ export default function ResetPasswordScreen() {
             autoComplete="new-password"
             textContentType="newPassword"
             placeholder="At least 8 characters"
+            onFocus={scrollToBottom}
           />
           <AppInput
             label="Confirm Password"
@@ -251,6 +260,7 @@ export default function ResetPasswordScreen() {
             autoComplete="new-password"
             textContentType="newPassword"
             placeholder="Re-enter password"
+            onFocus={scrollToBottom}
           />
           {formError ? (
             <AppText variant="footnote" color="danger">

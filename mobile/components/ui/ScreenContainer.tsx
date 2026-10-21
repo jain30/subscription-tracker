@@ -24,6 +24,7 @@ export type ScreenContainerProps = {
   background?: 'app' | 'surface';
   /** Optional RefreshControl when `scroll` is true */
   refreshControl?: ReactElement<RefreshControlProps>;
+  scrollRef?: React.RefObject<ScrollView | null>;
 };
 
 /**
@@ -39,6 +40,7 @@ export function ScreenContainer({
   contentStyle,
   background = 'app',
   refreshControl,
+  scrollRef,
 }: ScreenContainerProps) {
   const { theme } = useTheme();
 
@@ -51,6 +53,7 @@ export function ScreenContainer({
 
   const body = scroll ? (
     <ScrollView
+      ref={scrollRef}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       automaticallyAdjustKeyboardInsets={true}
