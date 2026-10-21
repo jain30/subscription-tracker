@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { View } from 'react-native';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
@@ -55,26 +55,31 @@ export function AuthScreenShell({
         />
       ) : null}
 
-      <ScreenContainer
-        edges={['top', 'left', 'right', 'bottom']}
-        scroll={scroll}
-        style={{ backgroundColor: 'transparent' }}
-        contentStyle={{
-          flexGrow: 1,
-          paddingTop: theme.spacing[2],
-          paddingBottom: contentBottomPad
-            ? theme.spacing[10]
-            : theme.spacing[4],
-        }}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {title || showBack ? (
-          <AppHeader
-            title={title ?? ''}
-            onBack={showBack ? handleBack : undefined}
-          />
-        ) : null}
-        {children}
-      </ScreenContainer>
+        <ScreenContainer
+          edges={['top', 'left', 'right', 'bottom']}
+          scroll={scroll}
+          style={{ backgroundColor: 'transparent' }}
+          contentStyle={{
+            flexGrow: 1,
+            paddingTop: theme.spacing[2],
+            paddingBottom: contentBottomPad
+              ? theme.spacing[16]
+              : theme.spacing[6],
+          }}
+        >
+          {title || showBack ? (
+            <AppHeader
+              title={title ?? ''}
+              onBack={showBack ? handleBack : undefined}
+            />
+          ) : null}
+          {children}
+        </ScreenContainer>
+      </KeyboardAvoidingView>
     </View>
   );
 }

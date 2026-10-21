@@ -51,8 +51,9 @@ export function ScreenContainer({
 
   const body = scroll ? (
     <ScrollView
-      keyboardShouldPersistTaps="always"
+      keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
+      automaticallyAdjustKeyboardInsets={true}
       showsVerticalScrollIndicator={false}
       refreshControl={refreshControl}
       contentContainerStyle={[
