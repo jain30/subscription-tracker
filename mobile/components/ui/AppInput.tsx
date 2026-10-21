@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react';
+import { forwardRef, useId, useState, type ReactNode } from 'react';
 import {
   Pressable,
   TextInput,
@@ -32,20 +32,23 @@ export type AppInputProps = Omit<
  * Labeled text field with helper/error, optional icons, and password mode.
  * Error color is paired with `errorMessage` text — never color alone.
  */
-export function AppInput({
-  label,
-  helperText,
-  errorMessage,
-  password = false,
-  disabled = false,
-  leftIcon,
-  rightIcon,
-  containerStyle,
-  accessibilityLabel,
-  onBlur,
-  onFocus,
-  ...rest
-}: AppInputProps) {
+export const AppInput = forwardRef<TextInput, AppInputProps>(function AppInput(
+  {
+    label,
+    helperText,
+    errorMessage,
+    password = false,
+    disabled = false,
+    leftIcon,
+    rightIcon,
+    containerStyle,
+    accessibilityLabel,
+    onBlur,
+    onFocus,
+    ...rest
+  },
+  ref,
+) {
   const { theme } = useTheme();
   const reactId = useId();
   const inputId = `app-input-${reactId}`;
@@ -128,6 +131,7 @@ export function AppInput({
         ) : null}
 
         <TextInput
+          ref={ref}
           {...rest}
           editable={!disabled}
           secureTextEntry={password && !secureVisible}
@@ -175,4 +179,4 @@ export function AppInput({
       ) : null}
     </View>
   );
-}
+});

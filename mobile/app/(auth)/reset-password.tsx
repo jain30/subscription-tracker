@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { Keyboard, ScrollView, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { ShieldAlert, ShieldCheck } from 'lucide-react-native';
 
@@ -219,10 +219,17 @@ export default function ResetPasswordScreen() {
     );
   }
 
+  const confirmPasswordRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
 
   const scrollToOffset = (offsetY: number) => {
     scrollRef.current?.scrollTo({ y: offsetY, animated: true });
+  };
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }, 60);
   };
 
   return (
@@ -247,9 +254,12 @@ export default function ResetPasswordScreen() {
             autoComplete="new-password"
             textContentType="newPassword"
             placeholder="At least 8 characters"
+            returnKeyType="next"
+            onSubmitEditing={() => confirmPasswordRef.current?.focus()}
             onFocus={() => scrollToOffset(0)}
           />
           <AppInput
+            ref={confirmPasswordRef}
             label="Confirm Password"
             value={values.confirmPassword}
             onChangeText={(text) => update('confirmPassword', text)}
@@ -258,7 +268,12 @@ export default function ResetPasswordScreen() {
             autoComplete="new-password"
             textContentType="newPassword"
             placeholder="Re-enter password"
-            onFocus={() => scrollToOffset(80)}
+            returnKeyType="done"
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+              void handleSubmit();
+            }}
+            onFocus={scrollToBottom}
           />
           {formError ? (
             <AppText variant="footnote" color="danger">

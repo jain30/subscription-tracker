@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { Keyboard, ScrollView, TextInput, View } from 'react-native';
 import { Redirect, router } from 'expo-router';
 import { MailCheck } from 'lucide-react-native';
 
@@ -168,10 +168,19 @@ export default function RegisterScreen() {
     );
   }
 
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const confirmPasswordRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
 
   const scrollToOffset = (offsetY: number) => {
     scrollRef.current?.scrollTo({ y: offsetY, animated: true });
+  };
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }, 60);
   };
 
   return (
@@ -195,9 +204,12 @@ export default function RegisterScreen() {
             autoComplete="name"
             textContentType="name"
             placeholder="Alex Morgan"
+            returnKeyType="next"
+            onSubmitEditing={() => emailRef.current?.focus()}
             onFocus={() => scrollToOffset(0)}
           />
           <AppInput
+            ref={emailRef}
             label="Email"
             value={values.email}
             onChangeText={(text) => update('email', text)}
@@ -207,9 +219,12 @@ export default function RegisterScreen() {
             keyboardType="email-address"
             textContentType="emailAddress"
             placeholder="you@example.com"
+            returnKeyType="next"
+            onSubmitEditing={() => passwordRef.current?.focus()}
             onFocus={() => scrollToOffset(0)}
           />
           <AppInput
+            ref={passwordRef}
             label="Password"
             value={values.password}
             onChangeText={(text) => update('password', text)}
@@ -219,9 +234,12 @@ export default function RegisterScreen() {
             textContentType="newPassword"
             placeholder="At least 8 characters"
             helperText="Minimum 8 characters"
-            onFocus={() => scrollToOffset(70)}
+            returnKeyType="next"
+            onSubmitEditing={() => confirmPasswordRef.current?.focus()}
+            onFocus={() => scrollToOffset(80)}
           />
           <AppInput
+            ref={confirmPasswordRef}
             label="Confirm Password"
             value={values.confirmPassword}
             onChangeText={(text) => update('confirmPassword', text)}
@@ -230,7 +248,12 @@ export default function RegisterScreen() {
             autoComplete="new-password"
             textContentType="newPassword"
             placeholder="Re-enter password"
-            onFocus={() => scrollToOffset(140)}
+            returnKeyType="done"
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+              void handleSubmit();
+            }}
+            onFocus={scrollToBottom}
           />
 
           {formError ? (

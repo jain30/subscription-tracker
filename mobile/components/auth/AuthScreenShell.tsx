@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
@@ -22,7 +22,7 @@ export type AuthScreenShellProps = {
 
 /**
  * Shared shell for welcome / login / register / password screens.
- * Provides clean, stable framing without sudden layout jumps.
+ * Provides clean framing with dynamic keyboard clearance (without global auto-scroll jerks).
  */
 export function AuthScreenShell({
   children,
@@ -35,6 +35,25 @@ export function AuthScreenShell({
   scrollRef,
 }: AuthScreenShellProps) {
   const { theme } = useTheme();
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSub = Keyboard.addListener(showEvent, (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const handleBack = onBack ?? (() => router.back());
 
@@ -70,9 +89,9 @@ export function AuthScreenShell({
           contentStyle={{
             flexGrow: 1,
             paddingTop: theme.spacing[2],
-            paddingBottom: contentBottomPad
-              ? theme.spacing[12]
-              : theme.spacing[6],
+            paddingBottom: keyboardHeight > 0
+              ? keyboardHeight + 20
+              : (contentBottomPad ? theme.spacing[12] : theme.spacing[6]),
           }}
         >
           {title || showBack ? (
