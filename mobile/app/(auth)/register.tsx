@@ -170,10 +170,8 @@ export default function RegisterScreen() {
 
   const scrollRef = useRef<ScrollView>(null);
 
-  const scrollToBottom = () => {
-    setTimeout(() => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    }, 80);
+  const scrollToOffset = (offsetY: number) => {
+    scrollRef.current?.scrollTo({ y: offsetY, animated: true });
   };
 
   return (
@@ -197,6 +195,7 @@ export default function RegisterScreen() {
             autoComplete="name"
             textContentType="name"
             placeholder="Alex Morgan"
+            onFocus={() => scrollToOffset(0)}
           />
           <AppInput
             label="Email"
@@ -208,6 +207,7 @@ export default function RegisterScreen() {
             keyboardType="email-address"
             textContentType="emailAddress"
             placeholder="you@example.com"
+            onFocus={() => scrollToOffset(0)}
           />
           <AppInput
             label="Password"
@@ -219,7 +219,7 @@ export default function RegisterScreen() {
             textContentType="newPassword"
             placeholder="At least 8 characters"
             helperText="Minimum 8 characters"
-            onFocus={scrollToBottom}
+            onFocus={() => scrollToOffset(70)}
           />
           <AppInput
             label="Confirm Password"
@@ -230,7 +230,7 @@ export default function RegisterScreen() {
             autoComplete="new-password"
             textContentType="newPassword"
             placeholder="Re-enter password"
-            onFocus={scrollToBottom}
+            onFocus={() => scrollToOffset(140)}
           />
 
           {formError ? (

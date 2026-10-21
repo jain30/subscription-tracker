@@ -221,10 +221,8 @@ export default function ResetPasswordScreen() {
 
   const scrollRef = useRef<ScrollView>(null);
 
-  const scrollToBottom = () => {
-    setTimeout(() => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    }, 80);
+  const scrollToOffset = (offsetY: number) => {
+    scrollRef.current?.scrollTo({ y: offsetY, animated: true });
   };
 
   return (
@@ -249,7 +247,7 @@ export default function ResetPasswordScreen() {
             autoComplete="new-password"
             textContentType="newPassword"
             placeholder="At least 8 characters"
-            onFocus={scrollToBottom}
+            onFocus={() => scrollToOffset(0)}
           />
           <AppInput
             label="Confirm Password"
@@ -260,7 +258,7 @@ export default function ResetPasswordScreen() {
             autoComplete="new-password"
             textContentType="newPassword"
             placeholder="Re-enter password"
-            onFocus={scrollToBottom}
+            onFocus={() => scrollToOffset(80)}
           />
           {formError ? (
             <AppText variant="footnote" color="danger">

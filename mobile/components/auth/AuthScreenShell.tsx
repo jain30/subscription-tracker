@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import type { ReactNode } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
@@ -22,6 +22,7 @@ export type AuthScreenShellProps = {
 
 /**
  * Shared shell for welcome / login / register / password screens.
+ * Provides clean, stable framing without sudden layout jumps.
  */
 export function AuthScreenShell({
   children,
@@ -31,34 +32,9 @@ export function AuthScreenShell({
   brandWash = true,
   scroll = true,
   contentBottomPad = true,
-  scrollRef: externalScrollRef,
+  scrollRef,
 }: AuthScreenShellProps) {
   const { theme } = useTheme();
-  const internalScrollRef = useRef<ScrollView>(null);
-  const scrollRef = externalScrollRef ?? internalScrollRef;
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-
-  useEffect(() => {
-    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
-
-    const showSub = Keyboard.addListener(showEvent, (e) => {
-      const height = e.endCoordinates.height;
-      setKeyboardHeight(height);
-      setTimeout(() => {
-        scrollRef.current?.scrollToEnd({ animated: true });
-      }, 50);
-    });
-
-    const hideSub = Keyboard.addListener(hideEvent, () => {
-      setKeyboardHeight(0);
-    });
-
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, [scrollRef]);
 
   const handleBack = onBack ?? (() => router.back());
 
@@ -94,9 +70,9 @@ export function AuthScreenShell({
           contentStyle={{
             flexGrow: 1,
             paddingTop: theme.spacing[2],
-            paddingBottom: keyboardHeight > 0
-              ? keyboardHeight + 80
-              : (contentBottomPad ? theme.spacing[16] : theme.spacing[6]),
+            paddingBottom: contentBottomPad
+              ? theme.spacing[12]
+              : theme.spacing[6],
           }}
         >
           {title || showBack ? (
