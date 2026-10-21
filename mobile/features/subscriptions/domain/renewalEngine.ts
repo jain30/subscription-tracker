@@ -14,7 +14,7 @@ import { isChargeable, isTrial } from './lifecycle';
 
 export const DEFAULT_UPCOMING_WINDOW_DAYS = 30;
 
-export type TimelineBucket = 'Tomorrow' | '3 days' | 'Next week' | 'Later';
+export type TimelineBucket = 'Overdue' | 'This week' | 'Next week';
 
 export type RenewalAssessment = {
   subscriptionId: string;
@@ -168,19 +168,16 @@ export function getTimelineBucket(
 ): TimelineBucket {
   const renewal = parseRenewalCalendarDate(renewalDate);
   if (renewal == null) {
-    return 'Later';
-  }
-  const days = daysBetweenCalendar(today, renewal);
-  if (days <= 1) {
-    return 'Tomorrow';
-  }
-  if (days <= 3) {
-    return '3 days';
-  }
-  if (days <= 14) {
     return 'Next week';
   }
-  return 'Later';
+  const days = daysBetweenCalendar(today, renewal);
+  if (days < 0) {
+    return 'Overdue';
+  }
+  if (days <= 7) {
+    return 'This week';
+  }
+  return 'Next week';
 }
 
 function reminderOffsetToDays(offset: ReminderOffset): number | null {

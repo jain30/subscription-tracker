@@ -11,10 +11,9 @@ export type UpcomingTimelineProps = {
 };
 
 const BUCKET_ORDER: InsightsTimelineItem['bucket'][] = [
-  'Tomorrow',
-  '3 days',
+  'Overdue',
+  'This week',
   'Next week',
-  'Later',
 ];
 
 /**
@@ -82,15 +81,17 @@ export function UpcomingTimeline({ items, style }: UpcomingTimelineProps) {
                   height: 10,
                   borderRadius: theme.radius.full,
                   backgroundColor:
-                    group.bucket === 'Tomorrow' || group.bucket === '3 days'
-                      ? theme.colors.accent
-                      : theme.colors.brand.primary,
-                  opacity: group.bucket === 'Later' ? 0.45 : 0.85,
+                    group.bucket === 'Overdue'
+                      ? theme.colors.danger
+                      : group.bucket === 'This week'
+                        ? theme.colors.accent
+                        : theme.colors.brand.primary,
+                  opacity: 0.9,
                 }}
               />
               <AppText
                 variant="caption"
-                color="secondary"
+                color={group.bucket === 'Overdue' ? 'danger' : 'secondary'}
                 style={{ letterSpacing: 0.4, textTransform: 'uppercase' }}
               >
                 {group.bucket}

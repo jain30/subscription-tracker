@@ -15,6 +15,7 @@ import {
   toMonthlyPrice,
   type AttentionItem,
   type CurrencyTotal,
+  type TimelineBucket,
 } from './domain';
 import type { Category, CurrencyCode, Subscription } from './types';
 import { categoryLabel } from './utils/category';
@@ -153,7 +154,7 @@ export type InsightsTimelineItem = {
   id: string;
   name: string;
   amount: string;
-  bucket: 'Tomorrow' | '3 days' | 'Next week' | 'Later';
+  bucket: TimelineBucket;
   relativeDue: string;
 };
 

@@ -5,6 +5,7 @@ import {
   assessRenewal,
   daysBetweenCalendar,
   getRelativeDueLabel,
+  getTimelineBucket,
   isDueSoon,
   isReminderEligible,
   parseIsoCalendarDate,
@@ -101,6 +102,27 @@ describe('relative due + due soon', () => {
     expect(isDueSoon('14 Aug 2026', TODAY, 3)).toBe(true);
     expect(isDueSoon('15 Aug 2026', TODAY, 3)).toBe(false);
     expect(isDueSoon('10 Aug 2026', TODAY, 3)).toBe(false);
+  });
+});
+
+describe('timeline bucket grouping', () => {
+  it('groups past renewals as Overdue', () => {
+    expect(getTimelineBucket('10 Aug 2026', TODAY)).toBe('Overdue'); // yesterday (-1)
+    expect(getTimelineBucket('9 Aug 2026', TODAY)).toBe('Overdue');  // -2 days
+    expect(getTimelineBucket('3 Aug 2026', TODAY)).toBe('Overdue');  // -8 days
+  });
+
+  it('groups today, tomorrow, and up to 7 days as This week', () => {
+    expect(getTimelineBucket('11 Aug 2026', TODAY)).toBe('This week'); // today (0)
+    expect(getTimelineBucket('12 Aug 2026', TODAY)).toBe('This week'); // tomorrow (1)
+    expect(getTimelineBucket('14 Aug 2026', TODAY)).toBe('This week'); // 3 days
+    expect(getTimelineBucket('18 Aug 2026', TODAY)).toBe('This week'); // 7 days
+  });
+
+  it('groups 8+ days as Next week', () => {
+    expect(getTimelineBucket('19 Aug 2026', TODAY)).toBe('Next week'); // 8 days
+    expect(getTimelineBucket('21 Aug 2026', TODAY)).toBe('Next week'); // 10 days
+    expect(getTimelineBucket('23 Aug 2026', TODAY)).toBe('Next week'); // 12 days
   });
 });
 
