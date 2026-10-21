@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { cancelSubscriptionRemote, updateSubscriptionRemote } from './api';
+import { cancelSubscriptionRemote, invalidateSubscriptionSessionCache, updateSubscriptionRemote } from './api';
 import type { Subscription } from './types';
 
 const mocks = vi.hoisted(() => {
@@ -86,6 +86,7 @@ function canceledRow() {
 
 describe('cancelSubscriptionRemote write path', () => {
   beforeEach(() => {
+    invalidateSubscriptionSessionCache();
     mocks.getSession.mockReset();
     mocks.from.mockClear();
     mocks.update.mockClear();
@@ -140,6 +141,7 @@ describe('cancelSubscriptionRemote write path', () => {
 
 describe('updateSubscriptionRemote write path', () => {
   beforeEach(() => {
+    invalidateSubscriptionSessionCache();
     mocks.getSession.mockReset();
     mocks.from.mockClear();
     mocks.update.mockClear();

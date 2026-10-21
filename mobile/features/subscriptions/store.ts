@@ -5,6 +5,7 @@ import {
   createSubscription as createSubscriptionRemote,
   deleteSubscriptionRemote,
   fetchSubscriptions,
+  invalidateSubscriptionSessionCache,
   updateSubscriptionRemote,
 } from './api';
 import { mapSubscriptionError, SubscriptionError } from './errors';
@@ -110,6 +111,7 @@ export const useSubscriptionStore = create<SubscriptionStoreState>(
 
     clearActiveUser: () => {
       loadGeneration += 1;
+      invalidateSubscriptionSessionCache();
       set({
         activeUserId: null,
         subscriptions: [],

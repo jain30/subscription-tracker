@@ -22,12 +22,24 @@ import type { Subscription, SubscriptionFormValues } from './types';
 const SUBSCRIPTION_SELECT =
   'id, user_id, name, category, price, currency, billing_cycle, renewal_date, reminder_offset, auto_renew, status, notes, color, payment_method, created_at, updated_at';
 
+let lastSessionCheckTime = 0;
+const SESSION_CACHE_TTL_MS = 60000;
+
+export function invalidateSubscriptionSessionCache(): void {
+  lastSessionCheckTime = 0;
+}
+
 async function requireAuthenticatedSession(): Promise<void> {
   if (!isSupabaseConfigured) {
     throw new SubscriptionError(
       'NOT_CONFIGURED',
       'Cloud sync is not configured. Add Supabase public keys to your environment.',
     );
+  }
+
+  const now = Date.now();
+  if (now - lastSessionCheckTime < SESSION_CACHE_TTL_MS) {
+    return;
   }
 
   const { data, error } = await supabase.auth.getSession();
@@ -43,6 +55,8 @@ async function requireAuthenticatedSession(): Promise<void> {
       'Please sign in to manage subscriptions.',
     );
   }
+
+  lastSessionCheckTime = now;
 }
 
 function throwIfRemoteError(
