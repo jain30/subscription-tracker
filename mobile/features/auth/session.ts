@@ -57,7 +57,7 @@ export type AuthUrlParams = {
  * Parse Supabase auth callback URLs (hash or query) without logging secrets.
  */
 export function parseAuthUrlParams(url: string): AuthUrlParams {
-  const normalized = url.includes('#') ? url.replace('#', '?') : url;
+  const normalized = url.includes('#') ? url.replace('#', url.includes('?') ? '&' : '?') : url;
   const parsed = Linking.parse(normalized);
   const query = parsed.queryParams ?? {};
 
