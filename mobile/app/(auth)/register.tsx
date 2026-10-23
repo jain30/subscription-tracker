@@ -62,7 +62,7 @@ export default function RegisterScreen() {
     return <Redirect href="/(auth)/reset-password" />;
   }
 
-  if (hydrated && session && !awaitingConfirmation) {
+  if (hydrated && session && !passwordRecoveryPending) {
     return <Redirect href="/(tabs)/home" />;
   }
 

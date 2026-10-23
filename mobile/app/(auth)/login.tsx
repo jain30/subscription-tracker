@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Pressable, View } from "react-native";
-import { Redirect, router } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 
 import {
   AuthFooterLink,
@@ -29,6 +29,7 @@ const INITIAL: LoginFormValues = {
  */
 export default function LoginScreen() {
   const { theme } = useTheme();
+  const searchParams = useLocalSearchParams<{ error?: string }>();
   const login = useAuthStore((state) => state.login);
   const session = useAuthStore((state) => state.session);
   const passwordRecoveryPending = useAuthStore(
@@ -38,6 +39,7 @@ export default function LoginScreen() {
   const [values, setValues] = useState<LoginFormValues>(INITIAL);
   const [errors, setErrors] = useState<FieldErrors<LoginFormValues>>({});
   const [formError, setFormError] = useState<string | null>(null);
+  const displayError = formError ?? searchParams.error ?? null;
   const [submitting, setSubmitting] = useState(false);
 
   if (hydrated && passwordRecoveryPending) {
@@ -137,9 +139,9 @@ export default function LoginScreen() {
             placeholder="Your password"
           />
 
-          {formError ? (
+          {displayError ? (
             <AppText variant="footnote" color="danger">
-              {formError}
+              {displayError}
             </AppText>
           ) : null}
 

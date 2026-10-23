@@ -43,23 +43,40 @@ function RootNavigator() {
         return;
       }
       processedUrls.add(url);
+
+      const isRecoveryIntent =
+        url.toLowerCase().includes('reset-password') ||
+        url.toLowerCase().includes('type=recovery');
+
       try {
         const handled = await handleAuthUrl(url);
         if (handled) {
-          const recovery = useAuthStore.getState().passwordRecoveryPending;
-          if (recovery) {
+          const state = useAuthStore.getState();
+          if (state.passwordRecoveryPending) {
             router.replace('/(auth)/reset-password');
+          } else if (state.session) {
+            router.replace('/(tabs)/home');
           }
         }
       } catch (error) {
         const message =
           error instanceof AuthError
             ? error.message
-            : 'This reset link is invalid or has expired. Request a new one or enter your recovery code.';
-        router.replace({
-          pathname: '/(auth)/reset-password',
-          params: { error: message },
-        });
+            : isRecoveryIntent
+            ? 'This reset link is invalid or has expired. Request a new one or enter your recovery code.'
+            : 'This verification link is invalid or has expired. Please log in or request a new link.';
+
+        if (isRecoveryIntent) {
+          router.replace({
+            pathname: '/(auth)/reset-password',
+            params: { error: message },
+          });
+        } else {
+          router.replace({
+            pathname: '/(auth)/login',
+            params: { error: message },
+          });
+        }
       }
     };
 
