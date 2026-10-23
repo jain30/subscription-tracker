@@ -43,6 +43,21 @@ export default function RegisterScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
 
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const confirmPasswordRef = useRef<TextInput>(null);
+  const scrollRef = useRef<ScrollView>(null);
+
+  const scrollToOffset = (offsetY: number) => {
+    scrollRef.current?.scrollTo({ y: offsetY, animated: true });
+  };
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }, 60);
+  };
+
   if (hydrated && passwordRecoveryPending) {
     return <Redirect href="/(auth)/reset-password" />;
   }
@@ -168,20 +183,6 @@ export default function RegisterScreen() {
     );
   }
 
-  const emailRef = useRef<TextInput>(null);
-  const passwordRef = useRef<TextInput>(null);
-  const confirmPasswordRef = useRef<TextInput>(null);
-  const scrollRef = useRef<ScrollView>(null);
-
-  const scrollToOffset = (offsetY: number) => {
-    scrollRef.current?.scrollTo({ y: offsetY, animated: true });
-  };
-
-  const scrollToBottom = () => {
-    setTimeout(() => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    }, 60);
-  };
 
   return (
     <AuthScreenShell title="Create Account" showBack scrollRef={scrollRef}>

@@ -101,8 +101,7 @@ export default function ForgotPasswordScreen() {
               style={{ textAlign: 'center', maxWidth: 300 }}
             >
               If an account exists for {values.email.trim()}, you will receive a
-              password reset link shortly. Open the link on this device to
-              continue.
+              password reset link and 6-digit recovery code shortly.
             </AppText>
           </View>
 
@@ -114,7 +113,14 @@ export default function ForgotPasswordScreen() {
             }}
           >
             <AppButton
+              label="Enter 6-Digit Code"
+              size="lg"
+              fullWidth
+              onPress={() => router.push('/(auth)/reset-password')}
+            />
+            <AppButton
               label="Back to Log In"
+              variant="secondary"
               size="lg"
               fullWidth
               onPress={() => router.replace('/(auth)/login')}

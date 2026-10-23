@@ -48,6 +48,7 @@ export type AuthUrlParams = {
   accessToken: string | null;
   refreshToken: string | null;
   code: string | null;
+  tokenHash: string | null;
   type: string | null;
   errorCode: string | null;
   errorDescription: string | null;
@@ -65,6 +66,7 @@ export function parseAuthUrlParams(url: string): AuthUrlParams {
     accessToken: readParam(query.access_token),
     refreshToken: readParam(query.refresh_token),
     code: readParam(query.code),
+    tokenHash: readParam(query.token_hash),
     type: readParam(query.type),
     errorCode: readParam(query.error) ?? readParam(query.error_code),
     errorDescription: readParam(query.error_description),

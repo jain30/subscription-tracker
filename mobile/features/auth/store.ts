@@ -34,14 +34,18 @@ export type AuthStoreState = {
   hydrated: boolean;
   isInitialized: boolean;
   isLoading: boolean;
-  /** Recovery deep link established a password-reset session. */
+  /** Recovery deep link or verified OTP established a password-reset session. */
   passwordRecoveryPending: boolean;
+  /** Preserved email from forgot-password request for OTP verification. */
+  recoveryEmail: string | null;
   hydrate: () => Promise<void>;
   completeOnboarding: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   register: (values: RegisterFormValues) => Promise<RegisterResult>;
   logout: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
+  verifyRecoveryOtp: (email: string, token: string) => Promise<void>;
+  setRecoveryEmail: (email: string | null) => void;
   updatePassword: (password: string) => Promise<void>;
   clearPasswordRecovery: () => void;
   /** Process auth callback URLs (recovery / confirm) without logging tokens. */
@@ -96,6 +100,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
   isInitialized: false,
   isLoading: true,
   passwordRecoveryPending: false,
+  recoveryEmail: null,
 
   hydrate: async () => {
     if (get().hydrated) {
@@ -118,6 +123,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         isInitialized: true,
         isLoading: false,
         passwordRecoveryPending: false,
+        recoveryEmail: null,
       });
       return;
     }
@@ -173,6 +179,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         isInitialized: true,
         isLoading: false,
         passwordRecoveryPending: false,
+        recoveryEmail: null,
       });
       await syncLocalWorkingSet(null);
     }
@@ -204,6 +211,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       session: mapped.session,
       user: mapped.user,
       passwordRecoveryPending: false,
+      recoveryEmail: null,
     });
     await syncLocalWorkingSet(mapped.user?.id ?? null);
   },
@@ -242,6 +250,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         session: mapped.session,
         user: mapped.user,
         passwordRecoveryPending: false,
+        recoveryEmail: null,
       });
       await syncLocalWorkingSet(mapped.user?.id ?? null);
       return { needsEmailConfirmation: false };
@@ -270,6 +279,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       session: null,
       user: null,
       passwordRecoveryPending: false,
+      recoveryEmail: null,
     });
   },
 
@@ -277,6 +287,8 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     assertConfigured();
     const normalized = normalizeEmail(email);
     const redirectTo = getPasswordResetRedirectUrl();
+
+    set({ recoveryEmail: normalized });
 
     const { error } = await supabase.auth.resetPasswordForEmail(normalized, {
       redirectTo,
@@ -287,6 +299,47 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     }
 
     // Always present success to the UI to avoid account enumeration.
+  },
+
+  setRecoveryEmail: (email) => {
+    set({ recoveryEmail: email ? normalizeEmail(email) : null });
+  },
+
+  verifyRecoveryOtp: async (email, token) => {
+    assertConfigured();
+    const normalized = normalizeEmail(email);
+    const cleanToken = token.trim();
+
+    if (!cleanToken) {
+      throw new AuthError(
+        'RECOVERY_INVALID',
+        'Please enter the 6-digit recovery code from your email.',
+      );
+    }
+
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: normalized,
+      token: cleanToken,
+      type: 'recovery',
+    });
+
+    if (error) {
+      throw mapAuthError(error, {
+        code: 'RECOVERY_INVALID',
+        message:
+          'Invalid or expired recovery code. Please check your code or request a new one.',
+      });
+    }
+
+    const mapped = toAuthSession(data.session);
+    set({
+      session: mapped.session,
+      user: mapped.user,
+      passwordRecoveryPending: true,
+      recoveryEmail: normalized,
+    });
+
+    useSubscriptionStore.getState().clearActiveUser();
   },
 
   updatePassword: async (password) => {
@@ -321,11 +374,12 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       session: null,
       user: null,
       passwordRecoveryPending: false,
+      recoveryEmail: null,
     });
   },
 
   clearPasswordRecovery: () => {
-    set({ passwordRecoveryPending: false });
+    set({ passwordRecoveryPending: false, recoveryEmail: null });
   },
 
   handleAuthUrl: async (url) => {
@@ -343,19 +397,36 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     }
 
     try {
+      let resolvedSession: Session | null = null;
       if (params.code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(params.code);
+        // PKCE callback (the default Supabase email-link flow).
+        const { data, error } = await supabase.auth.exchangeCodeForSession(params.code);
         if (error) {
           throw error;
         }
+        resolvedSession = data?.session ?? null;
+      } else if (params.tokenHash && params.type === 'recovery') {
+        // Custom Supabase email templates commonly redirect token_hash instead
+        // of a PKCE code. Verify it explicitly so the app establishes a recovery
+        // session rather than silently leaving the user on the OTP screen.
+        const { data, error } = await supabase.auth.verifyOtp({
+          token_hash: params.tokenHash,
+          type: 'recovery',
+        });
+        if (error) {
+          throw error;
+        }
+        resolvedSession = data?.session ?? null;
       } else if (params.accessToken && params.refreshToken) {
-        const { error } = await supabase.auth.setSession({
+        // Legacy implicit-flow callback.
+        const { data, error } = await supabase.auth.setSession({
           access_token: params.accessToken,
           refresh_token: params.refreshToken,
         });
         if (error) {
           throw error;
         }
+        resolvedSession = data?.session ?? null;
       } else {
         return false;
       }
@@ -364,12 +435,18 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         params.type === 'recovery' ||
         url.toLowerCase().includes('reset-password');
 
-      const { data } = await supabase.auth.getSession();
-      const mapped = toAuthSession(data.session);
+      if (!resolvedSession) {
+        const sessionRes = await supabase.auth.getSession();
+        resolvedSession = sessionRes?.data?.session ?? null;
+      }
+      const mapped = toAuthSession(resolvedSession);
       set({
         session: mapped.session,
         user: mapped.user,
         passwordRecoveryPending: isRecovery || get().passwordRecoveryPending,
+        recoveryEmail: isRecovery
+          ? mapped.user?.email || get().recoveryEmail
+          : get().recoveryEmail,
       });
 
       if (isRecovery || get().passwordRecoveryPending) {

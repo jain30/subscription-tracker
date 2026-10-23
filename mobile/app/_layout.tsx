@@ -52,9 +52,14 @@ function RootNavigator() {
           }
         }
       } catch (error) {
-        if (error instanceof AuthError && error.code === 'RECOVERY_INVALID') {
-          router.replace('/(auth)/forgot-password');
-        }
+        const message =
+          error instanceof AuthError
+            ? error.message
+            : 'This reset link is invalid or has expired. Request a new one or enter your recovery code.';
+        router.replace({
+          pathname: '/(auth)/reset-password',
+          params: { error: message },
+        });
       }
     };
 
