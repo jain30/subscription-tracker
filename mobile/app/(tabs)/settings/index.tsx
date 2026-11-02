@@ -5,6 +5,7 @@ import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
 import {
   Coins,
+  FileText,
   Heart,
   Info,
   LogOut,
@@ -32,6 +33,8 @@ const CONTENT_MAX_WIDTH = 560;
 const SECTION_GAP = 28;
 const APP_VERSION = '1.0.0';
 const SUPPORT_EMAIL = 'jainpooja.vit@gmail.com';
+const PRIVACY_POLICY_URL = 'https://subscription-tracker-legal-site.vercel.app/privacy';
+const TERMS_URL = 'https://subscription-tracker-legal-site.vercel.app/terms';
 
 function initialsFromName(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -257,6 +260,20 @@ export default function SettingsScreen() {
               label="Data Security"
               value="Row-Level Security (RLS)"
               showChevron={false}
+            />
+            <SettingsRow
+              Icon={FileText}
+              label="Privacy Policy"
+              value="View Policy"
+              showChevron
+              onPress={() => void Linking.openURL(PRIVACY_POLICY_URL)}
+            />
+            <SettingsRow
+              Icon={FileText}
+              label="Terms of Service"
+              value="View Terms"
+              showChevron
+              onPress={() => void Linking.openURL(TERMS_URL)}
               last
             />
           </SettingsSectionCard>

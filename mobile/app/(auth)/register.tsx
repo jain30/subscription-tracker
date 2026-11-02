@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { Keyboard, ScrollView, TextInput, View } from 'react-native';
 import { Redirect, router } from 'expo-router';
+import * as Linking from 'expo-linking';
 import { MailCheck } from 'lucide-react-native';
 
 import {
@@ -270,6 +271,29 @@ export default function RegisterScreen() {
             loading={submitting}
             onPress={() => void handleSubmit()}
           />
+          <View style={{ marginTop: theme.spacing[3], alignItems: 'center' }}>
+            <AppText variant="footnote" color="secondary" style={{ textAlign: 'center', lineHeight: 18 }}>
+              By creating an account, you agree to our{' '}
+              <AppText
+                variant="footnote"
+                color="primary"
+                style={{ textDecorationLine: 'underline' }}
+                onPress={() => void Linking.openURL('https://subscription-tracker-legal-site.vercel.app/terms')}
+              >
+                Terms
+              </AppText>{' '}
+              and{' '}
+              <AppText
+                variant="footnote"
+                color="primary"
+                style={{ textDecorationLine: 'underline' }}
+                onPress={() => void Linking.openURL('https://subscription-tracker-legal-site.vercel.app/privacy')}
+              >
+                Privacy Policy
+              </AppText>
+              .
+            </AppText>
+          </View>
         </AuthFormCard>
 
         <AuthFooterLink

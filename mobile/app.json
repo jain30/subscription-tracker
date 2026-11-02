@@ -26,7 +26,11 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.poojajain.subscriptiontracker",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
