@@ -45,8 +45,6 @@ function fallbackName(email: string | undefined): string {
 }
 
 export type AuthUrlParams = {
-  accessToken: string | null;
-  refreshToken: string | null;
   code: string | null;
   tokenHash: string | null;
   type: string | null;
@@ -63,8 +61,6 @@ export function parseAuthUrlParams(url: string): AuthUrlParams {
   const query = parsed.queryParams ?? {};
 
   return {
-    accessToken: readParam(query.access_token),
-    refreshToken: readParam(query.refresh_token),
     code: readParam(query.code),
     tokenHash: readParam(query.token_hash),
     type: readParam(query.type),

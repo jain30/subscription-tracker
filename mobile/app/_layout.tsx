@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as Linking from 'expo-linking';
 import { View } from 'react-native';
 
-import { AuthError, useAuthStore } from '@/features/auth';
+import { AuthError, RECOVERY_TOKEN_LIFETIME_MS, useAuthStore } from '@/features/auth';
 import { ThemeProvider, useTheme } from '@/theme';
 
 /**
@@ -44,9 +44,11 @@ function RootNavigator() {
       }
       processedUrls.add(url);
 
+      const authState = useAuthStore.getState();
       const isRecoveryIntent =
-        url.toLowerCase().includes('reset-password') ||
-        url.toLowerCase().includes('type=recovery');
+        url.toLowerCase().includes('type=recovery') ||
+        (typeof authState.recoveryRequestedAt === 'number' &&
+          Date.now() - authState.recoveryRequestedAt <= RECOVERY_TOKEN_LIFETIME_MS);
 
       try {
         const handled = await handleAuthUrl(url);

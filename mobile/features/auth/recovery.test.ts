@@ -84,7 +84,7 @@ vi.mock('./persistence', () => ({
   retireMockAuthPersistence: vi.fn(async () => {}),
 }));
 
-import { useAuthStore } from './store';
+import { RECOVERY_TOKEN_LIFETIME_MS, useAuthStore } from './store';
 
 describe('Task 25.02: Password Recovery Repair Test Suite', () => {
   beforeEach(() => {
@@ -97,6 +97,7 @@ describe('Task 25.02: Password Recovery Repair Test Suite', () => {
       isLoading: false,
       passwordRecoveryPending: false,
       recoveryEmail: null,
+      recoveryRequestedAt: null,
     });
   });
 
@@ -114,6 +115,7 @@ describe('Task 25.02: Password Recovery Repair Test Suite', () => {
       }),
     );
     expect(useAuthStore.getState().recoveryEmail).toBe('user@example.com');
+    expect(typeof useAuthStore.getState().recoveryRequestedAt).toBe('number');
   });
 
   // Gate 2: A valid recovery OTP creates/establishes the expected recovery state
@@ -265,6 +267,7 @@ describe('Task 25.02: Password Recovery Repair Test Suite', () => {
 
   // Gate 10: Existing valid direct-link recovery handling is preserved
   it('Gate 10: existing valid direct-link with code exchanges code and sets passwordRecoveryPending', async () => {
+    useAuthStore.setState({ recoveryRequestedAt: Date.now() });
     mocks.exchangeCodeForSession.mockResolvedValueOnce({ error: null });
     mocks.getSession.mockResolvedValueOnce({
       data: {
@@ -285,8 +288,11 @@ describe('Task 25.02: Password Recovery Repair Test Suite', () => {
     expect(useAuthStore.getState().passwordRecoveryPending).toBe(true);
   });
 
-  // Gate 10b: Custom Supabase templates may redirect token_hash instead of a PKCE code.
-  it('Gate 10b: token_hash recovery links verify the token and establish a recovery session', async () => {
+  // Security: A token_hash link after requestPasswordReset succeeds and sets passwordRecoveryPending
+  it('token_hash link after requestPasswordReset succeeds and sets passwordRecoveryPending', async () => {
+    mocks.resetPasswordForEmail.mockResolvedValueOnce({ error: null });
+    await useAuthStore.getState().requestPasswordReset('hash@example.com');
+
     mocks.verifyOtp.mockResolvedValueOnce({
       data: {
         session: {
@@ -310,6 +316,79 @@ describe('Task 25.02: Password Recovery Repair Test Suite', () => {
     });
     expect(useAuthStore.getState().passwordRecoveryPending).toBe(true);
     expect(useAuthStore.getState().recoveryEmail).toBe('hash@example.com');
+  });
+
+  // Security: A token-pair link never calls setSession and does not change the session
+  it('a token-pair link never calls setSession and does not change the session', async () => {
+    const initialSession = useAuthStore.getState().session;
+    const tokenPairUrl =
+      'subscriptiontracker://home#access_token=attacker-token&refresh_token=attacker-refresh&type=bearer';
+
+    const handled = await useAuthStore.getState().handleAuthUrl(tokenPairUrl);
+
+    expect(handled).toBe(false);
+    expect(mocks.setSession).not.toHaveBeenCalled();
+    expect(useAuthStore.getState().session).toBe(initialSession);
+  });
+
+  // Security: A token_hash link without a locally started reset is rejected and does not call verifyOtp
+  it('a token_hash link without a locally started reset is rejected and does not call verifyOtp', async () => {
+    useAuthStore.setState({ recoveryRequestedAt: null });
+    const tokenHashUrl =
+      'subscriptiontracker://reset-password?token_hash=unsolicited-hash&type=recovery';
+
+    await expect(useAuthStore.getState().handleAuthUrl(tokenHashUrl)).rejects.toThrow(
+      AuthError,
+    );
+    expect(mocks.verifyOtp).not.toHaveBeenCalled();
+    expect(useAuthStore.getState().passwordRecoveryPending).toBe(false);
+  });
+
+  // Security: The local reset flag expires after RECOVERY_TOKEN_LIFETIME_MS
+  it('the local reset flag expires and rejects token_hash links', async () => {
+    // Set recoveryRequestedAt to 2 hours ago (expired)
+    useAuthStore.setState({
+      recoveryRequestedAt: Date.now() - (RECOVERY_TOKEN_LIFETIME_MS + 60000),
+    });
+
+    const tokenHashUrl =
+      'subscriptiontracker://reset-password?token_hash=expired-hash&type=recovery';
+
+    await expect(useAuthStore.getState().handleAuthUrl(tokenHashUrl)).rejects.toThrow(
+      AuthError,
+    );
+    expect(mocks.verifyOtp).not.toHaveBeenCalled();
+    expect(useAuthStore.getState().passwordRecoveryPending).toBe(false);
+  });
+
+  // Security: A link that would replace an existing session for a different user is rejected
+  it('a link that would replace an existing session for a different user is rejected and not applied', async () => {
+    useAuthStore.setState({
+      session: {
+        user: { id: 'victim-user-id', email: 'victim@example.com', fullName: 'Victim' },
+      },
+      user: { id: 'victim-user-id', email: 'victim@example.com', fullName: 'Victim' },
+    });
+
+    mocks.exchangeCodeForSession.mockResolvedValueOnce({ error: null });
+    mocks.getSession.mockResolvedValueOnce({
+      data: {
+        session: {
+          access_token: 'attacker-session-token',
+          user: { id: 'attacker-user-id', email: 'attacker@example.com' },
+        },
+      },
+      error: null,
+    });
+
+    const takeoverUrl = 'subscriptiontracker://confirm?code=attacker-code';
+
+    await expect(useAuthStore.getState().handleAuthUrl(takeoverUrl)).rejects.toThrow(
+      /already signed in on this device/i,
+    );
+
+    // Verify session remains the victim's session
+    expect(useAuthStore.getState().user?.id).toBe('victim-user-id');
   });
 
   // Gate 11: Normal login, registration, logout, and session restoration do not regress

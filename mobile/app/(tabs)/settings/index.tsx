@@ -52,6 +52,10 @@ export default function SettingsScreen() {
   const { theme } = useTheme();
   const session = useAuthStore((state) => state.session);
   const logout = useAuthStore((state) => state.logout);
+  const deleteAccount = useAuthStore((state) => state.deleteAccount);
+  const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
   const [signOutVisible, setSignOutVisible] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
@@ -108,14 +112,24 @@ export default function SettingsScreen() {
   };
 
   const handleDeleteAccountRequest = () => {
-    Alert.alert(
-      'Delete Account',
-      `To permanently delete your account and remove all your data, please tap below to email support from your registered address (${profileEmail || 'your email'}). We will process your deletion immediately.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Email Support', onPress: () => void handleContactSupport() },
-      ],
-    );
+    setDeleteAccountError(null);
+    setDeleteAccountVisible(true);
+  };
+
+  const handleConfirmDeleteAccount = async () => {
+    setDeletingAccount(true);
+    setDeleteAccountError(null);
+    try {
+      await deleteAccount();
+      setDeleteAccountVisible(false);
+      router.replace('/(auth)/welcome');
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Unable to delete account. Please try again.';
+      setDeleteAccountError(message);
+    } finally {
+      setDeletingAccount(false);
+    }
   };
 
   const handleSignOut = async () => {
@@ -292,6 +306,15 @@ export default function SettingsScreen() {
               {signOutError}
             </AppText>
           ) : null}
+          {deleteAccountError ? (
+            <AppText
+              variant="footnote"
+              color="danger"
+              style={{ marginTop: theme.spacing[2] }}
+            >
+              {deleteAccountError}
+            </AppText>
+          ) : null}
         </AnimatedSection>
 
         <AnimatedSection delay={300}>
@@ -314,6 +337,25 @@ export default function SettingsScreen() {
         onCancel={() => {
           if (!signingOut) {
             setSignOutVisible(false);
+          }
+        }}
+      />
+
+      <ConfirmSheet
+        visible={deleteAccountVisible}
+        title="Delete account?"
+        message="This permanently deletes your account, profile, and all tracked subscriptions. This action cannot be undone."
+        confirmLabel={deletingAccount ? 'Deleting…' : 'Delete Account'}
+        cancelLabel="Cancel"
+        destructive
+        onConfirm={() => {
+          if (!deletingAccount) {
+            void handleConfirmDeleteAccount();
+          }
+        }}
+        onCancel={() => {
+          if (!deletingAccount) {
+            setDeleteAccountVisible(false);
           }
         }}
       />

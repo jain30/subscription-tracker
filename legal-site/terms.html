@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service - Subscription Tracker</title>
+  <style>
+    :root {
+      --bg: #F4F7F9;
+      --card-bg: #FFFFFF;
+      --text-main: #0E1A21;
+      --text-muted: #5A6A75;
+      --primary: #0A6B67;
+      --primary-light: #EBF5F4;
+      --border: #D2DBE2;
+      --danger: #B83A3A;
+      --danger-light: #FFF5F5;
+      --table-header: #EAEFF2;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0D151A;
+        --card-bg: #142027;
+        --text-main: #EDF3F7;
+        --text-muted: #95A5B0;
+        --primary: #229992;
+        --primary-light: #152E31;
+        --border: #23343F;
+        --danger: #E05A5A;
+        --danger-light: #2D1818;
+        --table-header: #1B2C36;
+      }
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.65;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    nav {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    nav a:hover, nav a.active {
+      color: var(--primary);
+    }
+    main {
+      flex: 1;
+      max-width: 820px;
+      width: 100%;
+      margin: 36px auto;
+      padding: 0 20px;
+    }
+    .container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+    @media (max-width: 640px) {
+      .container {
+        padding: 24px 18px;
+        border-radius: 12px;
+      }
+    }
+    .badge {
+      display: inline-block;
+      background-color: var(--primary-light);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .metadata {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      color: var(--primary);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    p, li {
+      color: var(--text-main);
+      font-size: 15px;
+    }
+    ul, ol {
+      padding-left: 22px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    .callout {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .callout p {
+      margin: 0;
+      font-size: 14px;
+    }
+    .contact-box {
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+    .contact-box p {
+      margin: 6px 0;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+    a:hover {
+      opacity: 0.85;
+    }
+    footer {
+      background: var(--card-bg);
+      border-top: 1px solid var(--border);
+      padding: 24px 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    footer a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="./index.html" class="brand">
+        <div class="brand-icon">ST</div>
+        <span>Subscription Tracker</span>
+      </a>
+      <nav>
+        <a href="./index.html">Home</a>
+        <a href="./privacy.html">Privacy Policy</a>
+        <a href="./terms.html" class="active">Terms of Service</a>
+        <a href="./delete-account.html">Delete Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="badge">Legal Agreement</div>
+      <h1>Terms of Service</h1>
+      <div class="metadata">
+        <strong>Application:</strong> Subscription Tracker &nbsp;|&nbsp; 
+        <strong>Effective Date:</strong> November 2, 2026
+      </div>
+
+      <p>Please read these Terms of Service ("Terms") carefully before using the <strong>Subscription Tracker</strong> mobile application and related services (collectively, the "Service") operated by <strong>Pooja Jain</strong> ("we", "us", or "our").</p>
+
+      <h2>1. Acceptance of Terms</h2>
+      <p>By creating an account or using Subscription Tracker, you agree to be bound by these Terms. If you do not agree to these Terms, do not use the application.</p>
+
+      <h2>2. Description of the Service</h2>
+      <p>Subscription Tracker is a personal expense management and subscription organization tool. It allows users to manually record, track, and monitor their recurring subscriptions, estimated renewal dates, and projected costs.</p>
+      
+      <div class="callout">
+        <p><strong>Disclaimer of Financial and Tax Advice:</strong> Subscription Tracker is strictly an informational and organizational tool. We do not provide banking, financial planning, investment, legal, or tax advice. Subscription Tracker does not process payments or cancel subscriptions on your behalf. You remain solely responsible for managing your financial accounts, billing relationships, and cancellation terms directly with your subscription providers.</p>
+      </div>
+
+      <h2>3. User Accounts</h2>
+      <ul>
+        <li>You must provide accurate and complete information when creating an account.</li>
+        <li>You are responsible for safeguarding your login credentials. You agree to notify us immediately of any unauthorized use of your account.</li>
+        <li>You must be at least 18 years old (or the legal age of majority in your jurisdiction) to use Subscription Tracker.</li>
+      </ul>
+
+      <h2>4. User Data & Privacy</h2>
+      <p>Your privacy is important to us. Please review our <a href="./privacy.html">Privacy Policy</a> to understand how we collect, store, and protect your information. By using the Service, you consent to our data practices as outlined in the Privacy Policy.</p>
+
+      <h2>5. Acceptable Use</h2>
+      <p>You agree not to:</p>
+      <ul>
+        <li>Use the Service for any unlawful, fraudulent, or harmful purpose.</li>
+        <li>Attempt to probe, scan, test the vulnerability of, or compromise our servers, security mechanisms, or database Row-Level Security policies.</li>
+        <li>Interfere with or disrupt the integrity or performance of the Service.</li>
+        <li>Reverse engineer, decompile, or disassemble any aspect of the application.</li>
+      </ul>
+
+      <h2>6. Termination & Account Deletion</h2>
+      <p>You may terminate your account at any time directly through the app via <strong>Settings &rarr; Delete Account</strong> or by sending an email deletion request to <a href="mailto:jainpooja.vit@gmail.com">jainpooja.vit@gmail.com</a>. Upon deletion, your data will be purged in accordance with our Privacy Policy.</p>
+      <p>We reserve the right to suspend or terminate your account if you violate these Terms or engage in activities that jeopardize the security or operation of the Service.</p>
+
+      <h2>7. Disclaimer of Warranties</h2>
+      <p>The Service is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind, whether express or implied. We do not warrant that the application will be uninterrupted, error-free, or that calculations based on user-entered dates or prices will be free from user data-entry inaccuracies.</p>
+
+      <h2>8. Limitation of Liability</h2>
+      <p>To the maximum extent permitted by applicable law, in no event shall the developer be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, resulting from your use of or inability to use the Service.</p>
+
+      <h2>9. Governing Law</h2>
+      <p>These Terms shall be governed by and construed in accordance with the laws of <strong>India</strong>, without regard to its conflict of law provisions.</p>
+
+      <h2>10. Contact Information</h2>
+      <div class="contact-box">
+        <p>If you have any questions about these Terms, please contact:</p>
+        <p><strong>Developer:</strong> Pooja Jain</p>
+        <p><strong>Application:</strong> Subscription Tracker</p>
+        <p><strong>Operating Region:</strong> India</p>
+        <p><strong>Email:</strong> <a href="mailto:jainpooja.vit@gmail.com">jainpooja.vit@gmail.com</a></p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Subscription Tracker. All rights reserved. &bull; <a href="./privacy.html">Privacy Policy</a> &bull; <a href="./terms.html">Terms of Service</a> &bull; <a href="./delete-account.html">Account Deletion</a></p>
+  </footer>
+</body>
+</html>

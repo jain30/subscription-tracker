@@ -1,4 +1,4 @@
-export { useAuthStore } from './store';
+export { useAuthStore, RECOVERY_TOKEN_LIFETIME_MS } from './store';
 export type { AuthStoreState } from './store';
 
 export {
