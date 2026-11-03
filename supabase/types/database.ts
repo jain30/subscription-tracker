@@ -129,6 +129,10 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      check_account_exists: {
+        Args: { p_email: string };
+        Returns: boolean;
+      };
       handle_new_user: { Args: Record<string, never>; Returns: unknown };
       set_updated_at: { Args: Record<string, never>; Returns: unknown };
     };

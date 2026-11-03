@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { router } from 'expo-router';
 import { MailCheck } from 'lucide-react-native';
 
-import { AuthFormCard, AuthScreenShell } from '@/components/auth';
+import { AuthFooterLink, AuthFormCard, AuthScreenShell } from '@/components/auth';
 import { AppButton, AppInput, AppText } from '@/components/ui';
 import {
   AuthError,
@@ -34,8 +34,10 @@ export default function ForgotPasswordScreen() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
+  const [showCreateAccount, setShowCreateAccount] = useState(false);
 
   const handleSubmit = async () => {
+    setShowCreateAccount(false);
     const nextErrors = validateForgotPasswordForm(values);
     setErrors(nextErrors);
     setFormError(null);
@@ -50,6 +52,9 @@ export default function ForgotPasswordScreen() {
     } catch (error) {
       if (error instanceof AuthError) {
         setFormError(error.message);
+        if (error.code === 'USER_NOT_FOUND') {
+          setShowCreateAccount(true);
+        }
         return;
       }
       setFormError('Unable to send a reset link. Please try again.');
@@ -175,6 +180,14 @@ export default function ForgotPasswordScreen() {
             onPress={() => void handleSubmit()}
           />
         </AuthFormCard>
+
+        {showCreateAccount ? (
+          <AuthFooterLink
+            prompt="Don't have an account?"
+            actionLabel="Create Account"
+            onPress={() => router.replace('/(auth)/register')}
+          />
+        ) : null}
       </View>
     </AuthScreenShell>
   );

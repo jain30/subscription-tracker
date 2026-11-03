@@ -57,6 +57,7 @@ export type AuthFailureCode =
   | 'RECOVERY_INVALID'
   | 'RECOVERY_MISSING'
   | 'NOT_CONFIGURED'
+  | 'USER_NOT_FOUND'
   | 'UNEXPECTED';
 
 export class AuthError extends Error {

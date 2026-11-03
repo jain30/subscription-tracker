@@ -323,6 +323,18 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     const normalized = normalizeEmail(email);
     const redirectTo = getPasswordResetRedirectUrl();
 
+    const { data: exists, error: rpcError } = await supabase.rpc(
+      'check_account_exists',
+      { p_email: normalized },
+    );
+
+    if (!rpcError && exists === false) {
+      throw new AuthError(
+        'USER_NOT_FOUND',
+        'No account found with this email. Please create an account.',
+      );
+    }
+
     set({ recoveryEmail: normalized, recoveryRequestedAt: Date.now() });
 
     const { error } = await supabase.auth.resetPasswordForEmail(normalized, {

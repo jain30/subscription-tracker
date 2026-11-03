@@ -35,6 +35,7 @@ const mocks = vi.hoisted(() => {
   }));
   const exchangeCodeForSession = vi.fn();
   const setSession = vi.fn();
+  const rpc = vi.fn();
 
   return {
     resetPasswordForEmail,
@@ -47,12 +48,14 @@ const mocks = vi.hoisted(() => {
     onAuthStateChange,
     exchangeCodeForSession,
     setSession,
+    rpc,
   };
 });
 
 vi.mock('@/lib/supabase', () => ({
   isSupabaseConfigured: true,
   supabase: {
+    rpc: mocks.rpc,
     auth: {
       resetPasswordForEmail: mocks.resetPasswordForEmail,
       verifyOtp: mocks.verifyOtp,
@@ -89,6 +92,7 @@ import { RECOVERY_TOKEN_LIFETIME_MS, useAuthStore } from './store';
 describe('Task 25.02: Password Recovery Repair Test Suite', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    mocks.rpc.mockResolvedValue({ data: true, error: null });
     useAuthStore.setState({
       session: null,
       user: null,
@@ -428,5 +432,49 @@ describe('Task 25.02: Password Recovery Repair Test Suite', () => {
       confirmPassword: 'Password123!',
     });
     expect(regResult.needsEmailConfirmation).toBe(true);
+  });
+
+  // check_account_exists tests
+  it('Not found: rpc resolves { data: false, error: null } -> requestPasswordReset throws AuthError with code USER_NOT_FOUND and resetPasswordForEmail is NOT called', async () => {
+    mocks.rpc.mockResolvedValueOnce({ data: false, error: null });
+
+    await expect(
+      useAuthStore.getState().requestPasswordReset('missing@example.com'),
+    ).rejects.toMatchObject({
+      code: 'USER_NOT_FOUND',
+      message: 'No account found with this email. Please create an account.',
+    });
+
+    expect(mocks.rpc).toHaveBeenCalledWith('check_account_exists', {
+      p_email: 'missing@example.com',
+    });
+    expect(mocks.resetPasswordForEmail).not.toHaveBeenCalled();
+  });
+
+  it('Fail-open: rpc resolves { data: null, error: { message: "network error" } } -> resetPasswordForEmail IS called and no USER_NOT_FOUND is thrown', async () => {
+    mocks.rpc.mockResolvedValueOnce({
+      data: null,
+      error: { message: 'network error' },
+    });
+    mocks.resetPasswordForEmail.mockResolvedValueOnce({ error: null });
+
+    await useAuthStore.getState().requestPasswordReset('user@example.com');
+
+    expect(mocks.resetPasswordForEmail).toHaveBeenCalledWith(
+      'user@example.com',
+      expect.any(Object),
+    );
+  });
+
+  it('Existing account: rpc resolves { data: true, error: null } -> resetPasswordForEmail IS called', async () => {
+    mocks.rpc.mockResolvedValueOnce({ data: true, error: null });
+    mocks.resetPasswordForEmail.mockResolvedValueOnce({ error: null });
+
+    await useAuthStore.getState().requestPasswordReset('existing@example.com');
+
+    expect(mocks.resetPasswordForEmail).toHaveBeenCalledWith(
+      'existing@example.com',
+      expect.any(Object),
+    );
   });
 });
