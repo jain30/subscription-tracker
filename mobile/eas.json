@@ -11,8 +11,17 @@
       }
     },
     "production": {
+      "environment": "production",
+      "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
+      }
+    },
+    "production-test": {
+      "extends": "production",
+      "autoIncrement": false,
+      "android": {
+        "buildType": "apk"
       }
     }
   }
