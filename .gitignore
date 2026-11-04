@@ -5,6 +5,8 @@
 .env.*
 !.env.example
 !**/.env.example
+*.keystore
+*service-account*.json
 
 # Dependencies
 node_modules/
