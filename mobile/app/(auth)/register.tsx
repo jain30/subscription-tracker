@@ -170,6 +170,13 @@ export default function RegisterScreen() {
               We sent a confirmation link to {values.email.trim()}. Open it to
               activate your account, then log in.
             </AppText>
+            <AppText
+              variant="footnote"
+              color="tertiary"
+              style={{ textAlign: 'center', maxWidth: 300 }}
+            >
+              Didn&apos;t receive it? Please check your Spam or Promotions folder.
+            </AppText>
           </View>
 
           <AppButton

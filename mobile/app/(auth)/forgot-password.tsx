@@ -108,6 +108,13 @@ export default function ForgotPasswordScreen() {
               If an account exists for {values.email.trim()}, you will receive a
               password reset link and 6-digit recovery code shortly.
             </AppText>
+            <AppText
+              variant="footnote"
+              color="tertiary"
+              style={{ textAlign: 'center', maxWidth: 300 }}
+            >
+              Didn&apos;t receive it? Please check your Spam or Promotions folder.
+            </AppText>
           </View>
 
           <View

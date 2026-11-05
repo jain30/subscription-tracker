@@ -224,6 +224,9 @@ export default function ResetPasswordScreen() {
               Enter your email and the 6-digit recovery code sent to your inbox
               to reset your password.
             </AppText>
+            <AppText variant="footnote" color="tertiary">
+              Didn&apos;t see the email? Please check your Spam or Promotions folder.
+            </AppText>
           </View>
 
           {displayOtpError ? (
