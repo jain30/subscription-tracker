@@ -224,9 +224,32 @@ export default function ResetPasswordScreen() {
               Enter your email and the 6-digit recovery code sent to your inbox
               to reset your password.
             </AppText>
-            <AppText variant="footnote" color="tertiary">
-              Didn&apos;t see the email? Please check your Spam or Promotions folder.
-            </AppText>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: theme.spacing[2],
+                backgroundColor: '#FEF7E6',
+                borderWidth: 1,
+                borderColor: '#F3DAA6',
+                borderRadius: theme.radius.md,
+                paddingVertical: theme.spacing[2],
+                paddingHorizontal: theme.spacing[3],
+                marginTop: theme.spacing[1],
+              }}
+            >
+              <AppText style={{ fontSize: 13 }}>💡</AppText>
+              <AppText
+                variant="footnote"
+                style={{
+                  color: '#8A5300',
+                  flexShrink: 1,
+                  lineHeight: 18,
+                }}
+              >
+                Didn&apos;t see the email? Please check your Spam or Promotions folder.
+              </AppText>
+            </View>
           </View>
 
           {displayOtpError ? (

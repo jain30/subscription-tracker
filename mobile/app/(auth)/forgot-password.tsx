@@ -108,13 +108,33 @@ export default function ForgotPasswordScreen() {
               If an account exists for {values.email.trim()}, you will receive a
               password reset link and 6-digit recovery code shortly.
             </AppText>
-            <AppText
-              variant="footnote"
-              color="tertiary"
-              style={{ textAlign: 'center', maxWidth: 300 }}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: theme.spacing[2],
+                backgroundColor: '#FEF7E6',
+                borderWidth: 1,
+                borderColor: '#F3DAA6',
+                borderRadius: theme.radius.md,
+                paddingVertical: theme.spacing[2],
+                paddingHorizontal: theme.spacing[3],
+                maxWidth: 320,
+                marginTop: theme.spacing[1],
+              }}
             >
-              Didn&apos;t receive it? Please check your Spam or Promotions folder.
-            </AppText>
+              <AppText style={{ fontSize: 13 }}>💡</AppText>
+              <AppText
+                variant="footnote"
+                style={{
+                  color: '#8A5300',
+                  flexShrink: 1,
+                  lineHeight: 18,
+                }}
+              >
+                Didn&apos;t receive it? Please check your Spam or Promotions folder.
+              </AppText>
+            </View>
           </View>
 
           <View
